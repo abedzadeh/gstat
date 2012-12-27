@@ -1,0 +1,131 @@
+
+> library(spacetime)
+Loading required package: sp
+
+> rm(list = ls())
+
+> data(air)
+
+> ls()
+[1] "DE_NUTS1" "rural"   
+
+> rr = rural[, "2005::2010"]
+
+> unsel = which(apply(as(rr, "xts"), 2, function(x) all(is.na(x))))
+
+> r5to10 = rr[-unsel, ]
+
+> summary(r5to10)
+Object of class STFDF
+ with Dimensions (s, t, attr): (53, 1826, 1)
+[[Spatial:]]
+Object of class SpatialPoints
+Coordinates:
+               min      max
+coords.x1  6.28107 14.78617
+coords.x2 47.80847 54.92497
+Is projected: FALSE 
+proj4string :
+[+init=epsg:4326 +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs
++towgs84=0,0,0]
+Number of points: 53
+[[Temporal:]]
+     Index                 ..1      
+ Min.   :2004-12-31   Min.   :2558  
+ 1st Qu.:2006-04-01   1st Qu.:3014  
+ Median :2007-07-01   Median :3470  
+ Mean   :2007-07-01   Mean   :3470  
+ 3rd Qu.:2008-09-29   3rd Qu.:3927  
+ Max.   :2009-12-30   Max.   :4383  
+[[Data attributes:]]
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+  0.560   9.275  13.850  16.260  20.330 269.100   21979 
+
+> rn = row.names(r5to10@sp)[4:7]
+
+> rn
+[1] "DEBE056" "DEBE032" "DEHE046" "DENW081"
+
+> par(mfrow = c(2, 2))
+
+> rn = row.names(r5to10@sp)[4:7]
+
+> for (i in rn) acf(na.omit(r5to10[i, ]), main = i)
+
+> acf(na.omit(as(r5to10[rn, ], "xts")))
+
+> print(spDists(r5to10[4:10, ]@sp), digits = 3)
+      [,1]  [,2] [,3] [,4] [,5] [,6] [,7]
+[1,]   0.0  28.8  344  468  292  235  135
+[2,]  28.8   0.0  317  440  269  231  131
+[3,] 343.6 317.3    0  150  309  282  285
+[4,] 467.9 439.7  150    0  336  432  430
+[5,] 291.7 268.5  309  336    0  438  362
+[6,] 235.5 231.0  282  432  438    0  101
+[7,] 134.6 130.9  285  430  362  101    0
+
+> rs = sample(dim(r5to10)[2], 100)
+
+> lst = lapply(rs, function(i) {
++     x = r5to10[, i]
++     x$ti = i
++     x
++ })
+
+> pts = do.call(rbind, lst)
+
+> library(gstat)
+
+> v = variogram(PM10 ~ ti, pts[!is.na(pts$PM10), ], 
++     dX = 0)
+
+> plot(v, fit.variogram(v, vgm(1, "Exp", 200, 1)))
+
+> vmod = fit.variogram(v, vgm(1, "Exp", 200, 1))
+
+> print(plot(v, vmod))
+
+> vmod
+  model     psill    range
+1   Nug  5.391083   0.0000
+2   Exp 65.341878 178.1758
+
+> dim(r5to10)
+    space      time variables 
+       53      1826         1 
+
+> data(vv)
+
+> vv <- vv[c("np", "dist", "gamma", "id", "timelag", 
++     "spacelag")]
+
+> print(plot(vv, ylab = "time lag (days)"), split = c(1, 
++     1, 1, 2), more = TRUE)
+
+> print(plot(vv, map = FALSE, ylab = "time lag (days)"), 
++     split = c(1, 2, 1, 2))
+
+> metricVgm <- list(joint = vgm(50, "Exp", 100, 0), 
++     nugget = 10, stAni = 50, stModel = "metric")
+
+> metricVgm <- fit.StVariogram(vv, metricVgm, method = "L-BFGS-B")$StVgmFit
+
+> print(plot(vv, metricVgm))
+
+> sepVgm <- list(space = vgm(1, "Exp", 123, 0), time = vgm(1, 
++     "Exp", 2.9, 0), sill = 45, nugget = 10, stModel = "separable")
+
+> sepVgm <- fit.StVariogram(vv, sepVgm, method = "L-BFGS-B")$StVgmFit
+
+> plot(vv, sepVgm)
+
+> print(plot(vv, sepVgm))
+
+> library(lattice)
+
+> print(plot(vv, wireframe = T, col.regions = bpy.colors()))
+
+ *** Run successfully completed ***
+> proc.time()
+   user  system elapsed 
+ 11.436   0.224  11.671 
