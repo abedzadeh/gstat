@@ -31,10 +31,8 @@ Loading required package: sp
 > stations = 4:15
 > windsqrt = sqrt(0.5148 * wind[stations]) # knots -> m/s
 > Jday = 1:366
-> daymeans = 
-+     apply( sapply(split(windsqrt - colMeans(windsqrt), wind$jday), mean), 
-+ 	2,  mean)
-There were 50 or more warnings (use warnings() to see the first 50)
+> daymeans = colMeans(
++ 	sapply(split(windsqrt - colMeans(windsqrt), wind$jday), colMeans))
 > meanwind = lowess(daymeans ~ Jday, f = 0.1)$y[wind$jday]
 > velocities = apply(windsqrt, 2, function(x) { x - meanwind })
 > # match order of columns in wind to Code in wind.loc;
@@ -89,6 +87,7 @@ There were 50 or more warnings (use warnings() to see the first 50)
 + all.equal(wind.pr0, wind.ST)
 + }
 Loading required package: rgdal
+rgdal: version: 0.8-2, (SVN revision 416:417)
 Geospatial Data Abstraction Library extensions to R successfully loaded
 Loaded GDAL runtime: GDAL 1.9.2, released 2012/10/08
 Path to GDAL shared files: /usr/share/gdal/1.9
@@ -103,4 +102,4 @@ Checking rgeos availability: TRUE
 > 
 > proc.time()
    user  system elapsed 
- 10.556   0.504  10.771 
+  4.908   0.152   4.926 
