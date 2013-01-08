@@ -12,9 +12,8 @@ wind$jday = as.numeric(format(wind$time, '%j'))
 stations = 4:15
 windsqrt = sqrt(0.5148 * wind[stations]) # knots -> m/s
 Jday = 1:366
-daymeans = 
-    apply( sapply(split(windsqrt - colMeans(windsqrt), wind$jday), mean), 
-	2,  mean)
+daymeans = colMeans(
+	sapply(split(windsqrt - colMeans(windsqrt), wind$jday), colMeans))
 meanwind = lowess(daymeans ~ Jday, f = 0.1)$y[wind$jday]
 velocities = apply(windsqrt, 2, function(x) { x - meanwind })
 # match order of columns in wind to Code in wind.loc;
