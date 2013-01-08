@@ -1,6 +1,6 @@
 Package: gstat
-Version: 1.0-15
-Date: 2012/12/03
+Version: 1.0-16
+Date: 2013/01/08
 Title: spatial and spatio-temporal geostatistical modelling, prediction
         and simulation
 Author: Edzer Pebesma <edzer.pebesma@uni-muenster.de> and others
