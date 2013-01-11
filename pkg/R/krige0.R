@@ -172,8 +172,6 @@ STsolve = function(A, b, X) {
 	cbind(ret1, ret2)
 }
 
-modelList <- list(space="sp",time="t")
-
 covfn.ST = function(x, y = x, model, separate=T) {
     switch(model$stModel,
            separable=covSep(x, y, model, separate),
@@ -204,15 +202,22 @@ covSep <- function(x, y, model, separate=TRUE) {
 ## product-sum model, BG
 covProdSum <- function(x, y, model) {
   
-  k <- (sum(model$space$psill)+sum(model$time$psill)-model$sill)/(sum(model$space$psill)*sum(model$time$psill))
-  if (k <= 0 | k > 1/max(model$space$psill[2],model$time$psill[2])) 
-    stop("k is negative or too large, non valid model!")
+  vs = variogramLine(model$space, 
+                     dist_vector=spDists(coordinates(x@sp), coordinates(y@sp)))
+  vt = variogramLine(model$time, 
+                     dist_vector = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-")))
   
-  covST <- covSep(x, y, model, separate=TRUE)
-  return((1-model$k*model$sill)*( covST$Tm %x% matrix(1,nrow(covST$Sm),ncol(covST$Sm)) + matrix(1,nrow(covST$Tm),ncol(covST$Tm)) %x% covST$Sm - model$sill ) + model$k * covST$Tm %x% covST$Sm)
+  k <- (sum(model$space$psill)+sum(model$time$psill)-model$sill)/(sum(model$space$psill)*sum(model$time$psill))
+  
+  if (k <= 0 | k > 1/max(model$space$psill[2],model$time$psill[2])) 
+    stop("k is negative or too large: no valid model!")
+
+  # VGM: vs+vt-k*vs*vt+model$nugget
+
+  return(model$sill-(vt %x% matrix(1,nrow(vs),ncol(vs)) 
+                     + matrix(1,nrow(vt),ncol(vt)) %x% vs
+                     - k * vt %x% vs))
 }
-
-
 
 ## sumMetric model
 covSumMetric <- function(x, y, model) {

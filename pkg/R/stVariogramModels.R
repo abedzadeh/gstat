@@ -23,10 +23,10 @@ vgmSeparable <- function(model, dist_grid, covariance, separate=TRUE) {
 # productSum model: C_s*C_t + C_s + C_t
 vgmProdSum <- function(model, dist_grid, covariance) {
   if(covariance)
-    return(gstat:::covProdSum(x=dist_grid$spacelag, y=dist_grid$timelag, model)) # to be integrated
+    return(covProdSum(x=dist_grid$spacelag, y=dist_grid$timelag, model)) # to be integrated
   
-  vs = variogramLine(model$space, dist_vector=dist_grid$spacelag, covariance=covariance)[,2]
-  vt = variogramLine(model$time, dist_vector=dist_grid$timelag, covariance=covariance)[,2]
+  vs = variogramLine(model$space, dist_vector=dist_grid$spacelag)[,2]
+  vt = variogramLine(model$time, dist_vector=dist_grid$timelag)[,2]
 
   k <- (sum(model$space$psill)+sum(model$time$psill)-model$sill)/(sum(model$space$psill)*sum(model$time$psill))
   
