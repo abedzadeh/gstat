@@ -183,7 +183,7 @@ covfn.ST = function(x, y = x, model, separate=T) {
 covSep <- function(x, y, model, separate=TRUE) {
   if (is(model$space, "variogramModel")) 
     Sm = variogramLine(model$space, covariance = TRUE, dist_vector = 
-      spDists(coordinates(x@sp), coordinates(y@sp)))
+      spDists(coordinates(x@sp), coordinates(y@sp)))*model$sill
   else
     Sm = model$space(x, y)
   stopifnot(!is.null(Sm))

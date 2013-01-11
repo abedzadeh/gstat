@@ -331,9 +331,9 @@ Now, let us try to fit and plot a separable model (figure~\ref{fig:sm}):
 % # @
 
 <<>>==
-sepVgm <- list(space=vgm(1,"Exp", 123, 0),
-               time =vgm(1,"Exp", 2.9, 0),
-               sill=45, nugget=10, stModel="separable")
+sepVgm <- list(space=vgm(0.9,"Exp", 123, 0.1),
+               time =vgm(0.9,"Exp", 2.9, 0.1),
+               sill=45, stModel="separable")
 
 sepVgm <- fit.StVariogram(vv, sepVgm, method = "L-BFGS-B")$StVgmFit
 plot(vv,sepVgm)

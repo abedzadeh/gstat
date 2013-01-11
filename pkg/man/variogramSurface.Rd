@@ -32,12 +32,11 @@ Benedikt Graeler
 See \code{\link{variogramLine}} for the spatial version and \code{\link{fit.StVariogram}} for the estimation of spatio-temporal variograms.
 }
 \examples{
-# separable model: spatial and temporal sill and nugget will be ignored
-# and kept constant at 1 and 0 respectively. Only a joint sill and nugget
-# are used.
-separableModel <- list(space=vgm(1,"Exp", 147, 0),
-                       time =vgm(1,"Exp", 3.5, 0),
-                       sill=40, nugget=16, stModel="separable")
+# separable model: spatial and temporal sill will be ignored
+# and kept constant at 1-nugget respectively. A joint sill is used.
+separableModel <- list(space=vgm(0.9,"Exp", 147, 0.1),
+                       time =vgm(0.9,"Exp", 3.5, 0.1),
+                       sill=40, stModel="separable")
 
 # product sum model: spatial and temporal nugget will be ignored and kept
 # constant at 0. Only a joint nugget is used.

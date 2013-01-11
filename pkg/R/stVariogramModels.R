@@ -13,11 +13,11 @@ vgmSeparable <- function(model, dist_grid, covariance, separate=TRUE) {
   if(covariance)
     return(covSep(x=dist_grid$spacelag, y=dist_grid$timelag, model, separate=separate)) # to be integrated
   
-  vs = variogramLine(model$space, dist_vector=dist_grid$spacelag, covariance=covariance)[,2]
-  vt = variogramLine(model$time,  dist_vector=dist_grid$timelag,  covariance=covariance)[,2]
+  vs = variogramLine(model$space, dist_vector=dist_grid$spacelag)[,2]
+  vt = variogramLine(model$time,  dist_vector=dist_grid$timelag)[,2]
 
   data.frame(spacelag=dist_grid$spacelag, timelag=dist_grid$timelag, 
-             model=model$nugget+model$sill*(vs+vt-vs*vt))
+             model=model$sill*(vs+vt-vs*vt))
 }
 
 # productSum model: C_s*C_t + C_s + C_t
@@ -90,8 +90,9 @@ insertPar <- function(par, model) {
 
 extractPar <- function(model) {
   switch(model$stModel,
-         separable=c(range.s= model$space$range[2], range.t = model$time$range[2],
-                     sill= model$sill, nugget = model$nugget),
+         separable=c(range.s=model$space$range[2], nugget.s=model$space$psill[1],
+                     range.t=model$time$range[2],  nugget.t=model$time$psill[1],
+                     sill= model$sill),
          productSum=c(sill.s = model$space$psill[2], range.s = model$space$range[2],
                       sill.t = model$time$psill[2],  range.t = model$time$range[2], 
                       sill=model$sill, nugget=model$nugget),
@@ -110,9 +111,9 @@ extractPar <- function(model) {
 }
 
 insertParSeparable <- function(par, model) {
-  list(space=vgm(1,as.character(model$space$model[2]),par[1],0),
-       time= vgm(1,as.character(model$time$model[2]),par[2],0),
-       sill=par[3], nugget=par[4], stModel="separable")
+  list(space=vgm(1-par[2],as.character(model$space$model[2]),par[1],par[2]),
+       time= vgm(1-par[4],as.character(model$time$model[2]),par[3],par[4]),
+       sill=par[5], stModel="separable")
 }
 
 insertParProdSum <- function(par, model) {

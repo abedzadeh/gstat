@@ -61,7 +61,9 @@ layout = list(list("sp.points", pts, first=F, cex=.5),
 	list("sp.lines", m, col='grey'))
 wind.pr0 = STFDF(grd, tgrd, data.frame(pred = pred))
 
-v = list(space = vgm(0.6, "Exp", 750000), time = vgm(1, "Exp", 1.5 * 3600 * 24))
+v = list(space = vgm(1, "Exp", 750000), 
+         time = vgm(1, "Exp", 1.5 * 3600 * 24),
+         sill = 0.6, model="separable")
 pred = krigeST(sqrt(values)~1, w, STF(grd, tgrd), v)
 wind.ST = STFDF(grd, tgrd, data.frame(pred = pred))
 
