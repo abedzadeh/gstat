@@ -134,6 +134,11 @@ simulation, or for other interpolation methods provided by gstat (such as
 inverse distance weighted interpolation or trend surface interpolation)
 use the functions \link{gstat} and \link{predict.gstat} directly.
 
+Function \code{krigeST} offers some particular methods for
+spatio-temporal (ST) kriging. In particular, it does not support
+block kriging or kriging in a local neighbourhood, and does not
+provide simulation (\code{nsim}).
+
 Function \code{idw} performs just as \code{krige} without a model being
 passed, but allows direct specification of the inverse distance weighting
 power. Don't use with predictors in the formula.
