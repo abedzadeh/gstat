@@ -102,7 +102,7 @@ variogramST = function(formula, locations, data, ..., tlags = 0:15,
 	na.omit(v)
 }
 
-plot.StVariogram = function(x, ..., col = bpy.colors(), xlab, ylab, map = TRUE,
+plot.StVariogram = function(x, model=NULL, ..., col = bpy.colors(), xlab, ylab, map = TRUE,
 		convertMonths = FALSE, wireframe = FALSE, both = FALSE) {
 	lst = list(...)
 	if (!is.null(lst$col.regions))
@@ -126,6 +126,9 @@ plot.StVariogram = function(x, ..., col = bpy.colors(), xlab, ylab, map = TRUE,
 		if (!is.null(u))
 			ylab = paste(ylab, " (", u, ")", sep="")
 	}
+  if(!is.null(model)) {
+    x[["model"]] <- variogramSurface(model, x[,c("spacelag","timelag")])$model
+  }
 	x0 = x # needed by wireframe()
 	if (!is.null(x$model)) {
 		v0 = rbind(x, x)

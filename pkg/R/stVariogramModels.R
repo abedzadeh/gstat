@@ -141,15 +141,3 @@ insertParMetric <- function(par, model) {
   list(joint=vgm(par[1], as.character(model$joint$model[2]), par[2], par[3]),
        stAni=par[4], stModel="metric")
 }
-
-## plot sample variogram and fitted model
-plot.StVariogramModel <- function(x, model, ..., col = bpy.colors(), xlab, ylab, 
-                                  map = TRUE, convertMonths = FALSE, 
-                                  wireframe = FALSE) {
-  x[["model"]] <- variogramSurface(model, x[,c("spacelag","timelag")])$model
-  plot(x,col=col, xlab=xlab, ylab=ylab, map=map, convertMonths=convertMonths,
-       wireframe=wireframe, both=T)
-}
-
-setMethod(plot,signature=signature("StVariogram","list"),
-          function(x,y,... ) plot.StVariogramModel(x,y, ...))
