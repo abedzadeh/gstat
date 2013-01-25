@@ -68,10 +68,7 @@ idw0(formula, data, newdata, y)
  \item{model}{ variogram model of dependent variable (or its residuals), 
   defined by a call to \link{vgm} or \link{fit.variogram}; for \code{krige0}
   also a user-supplied covariance function is allowed (see example below) }
- \item{modelList}{ list with two named elements: space and time; these should
- either be the output of \link{vgm}, or user-defined covariance functions that
- take one or two ST objects; a separable covariance model is assumed and 
- exploited }
+ \item{modelList}{ list with named elements: space, time and/or joint depending on the spatio-temporal covariance family and an entry stModel. Currently implemented families that may be used for stModel are \code{separable}, \code{productSum}, \code{metric}, \code{sumMetric} and \code{simpleSumMetric}. See the examples section in \code{\link{fit.StVariogram}} or \code{\link{variogramSurface}} for details on how to define spatio-temporal covariance models.}
  \item{beta}{ for simple kriging (and simulation based on simple
   kriging): vector with the trend coefficients (including intercept);
   if no independent variables are defined the model only contains an
