@@ -1,12 +1,14 @@
 library(gstat)
 loadMeuse()
 
+# NLKrige: non-linear kriging (e.g. log-normal kriging), simulation based.
+# arguments:
 # formula, data, newdata, vgm: see ?krige
 # trans: transformation and back-transformation function;
 # summarize: optional, summarize the simulations, see example below;
-# nmax, nsim: see ?krgie
+# nmax, nsim: see ?krige
 # density: number of points to discretize each block PROVIDED BLOCK SIZES
-#   ARE CONSTANT (note: newdata can also be SpatialPolygons -- if newdata is
+#   ARE CONSTANT (note that newdata can also be SpatialPolygons -- if newdata is
 #   a grid, cell size is used as block size)
 NLKrige = function(formula, data, newdata, vgm, trans = c(log,exp), summarize,
 		nmax = 50, nsim = 100, density = 16, ...) {
@@ -34,8 +36,8 @@ NLKrige = function(formula, data, newdata, vgm, trans = c(log,exp), summarize,
 
 aggr = NLKrige(zinc~1, meuse, meuse.grid, vgm(.5, "Sph", 900, .1), nmax = 10, 
 	summarize = mean)
-spplot(aggr)
+spplot(aggr, main = "expected value of block means")
 
 aggr = NLKrige(zinc~1, meuse, meuse.grid, vgm(.5, "Sph", 900, .1), nmax = 10, 
 	summarize = quantile, probs = c(0.025, 0.975))
-spplot(aggr)
+spplot(aggr, main = "95% CI for block means")
