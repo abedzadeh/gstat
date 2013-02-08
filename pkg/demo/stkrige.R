@@ -177,7 +177,7 @@ lollipop3d(vv$spacelag, vv$timelag, vv$gamma,  main="simplified sum-metric model
 
 data(air)
 rr <- rural[,"2005-06-01/2005-06-10"]
-rr <- as(rr,"STFDF")
+rr <- as(rr,"STSDF")
 
 x1 <- seq(from=6,to=15,by=.5)
 x2 <- seq(from=47.5,to=55,by=.5)
