@@ -3,7 +3,7 @@
 \docType{methods}
 \alias{krige}
 \alias{krige0}
-\alias{krigeST}
+%\alias{krigeST}
 \alias{krige.locations}
 \alias{krige.spatial}
 \alias{idw}
@@ -17,10 +17,12 @@
 \alias{krige,formula,NULL-method}
 \alias{idw,formula,formula-method}
 \alias{idw,formula,Spatial-method}
-\alias{idw,formula,ST-method}
-\alias{krige,formula,ST-method} % calling krigeST
+\alias{idw,formula,ST-method} % move to krigeST as well?
+% \alias{krige,formula,ST-method} % calling krigeST
+
 \title{ Simple, Ordinary or Universal, global or local, Point or Block Kriging,
 or simulation. }
+
 \description{
 Function for simple, ordinary or universal kriging (sometimes called
 external drift kriging), kriging in a local neighbourhood, point kriging
@@ -38,8 +40,6 @@ krige.spatial(formula, locations, newdata, model, ..., beta, nmax
 = Inf, nmin = 0, omax = 0, maxdist = Inf, block, nsim = 0, indicators = FALSE,
 na.action = na.pass, debug.level = 1)
 krige0(formula, data, newdata, model, beta, y, ..., computeVar = FALSE,
-	fullCovariance = FALSE)
-krigeST(formula, data, newdata, modelList, y, ..., computeVar = FALSE,
 	fullCovariance = FALSE)
 idw(formula, locations, ...)
 idw.locations(formula, locations, data, newdata, nmax = Inf, 
@@ -68,7 +68,6 @@ idw0(formula, data, newdata, y)
  \item{model}{ variogram model of dependent variable (or its residuals), 
   defined by a call to \link{vgm} or \link{fit.variogram}; for \code{krige0}
   also a user-supplied covariance function is allowed (see example below) }
- \item{modelList}{ list with named elements: space, time and/or joint depending on the spatio-temporal covariance family and an entry stModel. Currently implemented families that may be used for stModel are \code{separable}, \code{productSum}, \code{metric}, \code{sumMetric} and \code{simpleSumMetric}. See the examples section in \code{\link{fit.StVariogram}} or \code{\link{variogramSurface}} for details on how to define spatio-temporal covariance models.}
  \item{beta}{ for simple kriging (and simulation based on simple
   kriging): vector with the trend coefficients (including intercept);
   if no independent variables are defined the model only contains an
@@ -130,11 +129,6 @@ simulation methods available in gstat. For multivariate prediction or
 simulation, or for other interpolation methods provided by gstat (such as
 inverse distance weighted interpolation or trend surface interpolation)
 use the functions \link{gstat} and \link{predict.gstat} directly.
-
-Function \code{krigeST} offers some particular methods for
-spatio-temporal (ST) kriging. In particular, it does not support
-block kriging or kriging in a local neighbourhood, and does not
-provide simulation (\code{nsim}).
 
 Function \code{idw} performs just as \code{krige} without a model being
 passed, but allows direct specification of the inverse distance weighting

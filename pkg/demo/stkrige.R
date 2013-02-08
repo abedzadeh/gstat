@@ -8,7 +8,7 @@ data(vv)
 
 separableModel <- list(space=vgm(1,"Exp", 123, 0),
                        time =vgm(1,"Exp", 2.9, 0),
-                       sill=45, nugget=10, stModel="separable")
+                       sill=45, stModel="separable")
 
 prodSumModel <- list(space=vgm(50, "Sph", 150, 0),
                      time= vgm(50, "Exp",  10, 0), 
@@ -177,7 +177,7 @@ lollipop3d(vv$spacelag, vv$timelag, vv$gamma,  main="simplified sum-metric model
 
 data(air)
 rr <- rural[,"2005-06-01/2005-06-10"]
-rr <- as(rr,"STSDF")
+rr <- as(rr,"STFDF")
 
 x1 <- seq(from=6,to=15,by=.5)
 x2 <- seq(from=47.5,to=55,by=.5)

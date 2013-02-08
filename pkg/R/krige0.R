@@ -135,9 +135,16 @@ krigeST <- function(formula, data, newdata, modelList, y, ...,
 		var = c0 - t(v0) %*% skwts + t(Q) %*% CHsolve(t(X) %*% ViX, Q)
 		if (!fullCovariance)
 			var = diag(var)
-		list(pred = pred, var = var)
+		res <- data.frame(pred = pred, var = var)
 	} else
-		pred
+		res <- data.frame(pred)
+  
+  # wrapping the predictions in ST*DF again
+	if (ncol(res) == 1)
+	  names(res) = "var1.pred"
+	if (ncol(res) == 2)
+	  names(res) = c("var1.pred", "var1.var")
+	addAttrToGeom(geometry(newdata), res)
 }
 
 STsolve = function(A, b, X) {
