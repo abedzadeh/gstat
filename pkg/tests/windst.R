@@ -63,7 +63,7 @@ wind.pr0 = STFDF(grd, tgrd, data.frame(pred = pred))
 
 v = list(space = vgm(1, "Exp", 750000), 
          time = vgm(1, "Exp", 1.5 * 3600 * 24),
-         sill = 0.6, model="separable")
+         sill = 0.6, stModel = "separable")
 pred = krigeST(sqrt(values)~1, w, STF(grd, tgrd), v)
 wind.ST = STFDF(grd, tgrd, data.frame(pred = pred))
 
