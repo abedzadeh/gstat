@@ -2,7 +2,7 @@
 R version 2.15.2 (2012-10-26) -- "Trick or Treat"
 Copyright (C) 2012 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
-Platform: x86_64-pc-linux-gnu (64-bit)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -78,21 +78,24 @@ Loading required package: sp
 + pred = krige0(sqrt(values)~1, w, STF(grd, tgrd), covfn)
 + layout = list(list("sp.points", pts, first=F, cex=.5),
 + 	list("sp.lines", m, col='grey'))
-+ wind.pr0 = STFDF(grd, tgrd, data.frame(pred = pred))
++ wind.pr0 = STFDF(grd, tgrd, data.frame(var1.pred = pred))
 + 
-+ v = list(space = vgm(0.6, "Exp", 750000), time = vgm(1, "Exp", 1.5 * 3600 * 24))
-+ pred = krigeST(sqrt(values)~1, w, STF(grd, tgrd), v)
-+ wind.ST = STFDF(grd, tgrd, data.frame(pred = pred))
++ v = vgmST("separable",
++           space = vgm(1, "Exp", 750000), 
++           time = vgm(1, "Exp", 1.5 * 3600 * 24),
++           sill = 0.6)
++ wind.ST = krigeST(sqrt(values)~1, w, STF(grd, tgrd), v)
 + 
 + all.equal(wind.pr0, wind.ST)
 + }
 Loading required package: rgdal
-rgdal: version: 0.8-2, (SVN revision 416:417)
+rgdal: version: 0.8-5, (SVN revision 449)
 Geospatial Data Abstraction Library extensions to R successfully loaded
 Loaded GDAL runtime: GDAL 1.9.2, released 2012/10/08
-Path to GDAL shared files: /usr/share/gdal/1.9
-Loaded PROJ.4 runtime: Rel. 4.8.0, 6 March 2012, [PJ_VERSION: 480]
-Path to PROJ.4 shared files: (autodetected)
+Path to GDAL shared files: C:/Users/b_grae02/Documents/R/win-library/2.15/rgdal/gdal
+GDAL does not use iconv for recoding strings.
+Loaded PROJ.4 runtime: Rel. 4.7.1, 23 September 2009, [PJ_VERSION: 470]
+Path to PROJ.4 shared files: C:/Users/b_grae02/Documents/R/win-library/2.15/rgdal/proj
 Loading required package: maps
 Loading required package: foreign
 Loading required package: grid
@@ -102,4 +105,4 @@ Checking rgeos availability: TRUE
 > 
 > proc.time()
    user  system elapsed 
-  4.908   0.152   4.926 
+   6.83    0.15    6.98 

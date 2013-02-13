@@ -93,16 +93,14 @@ krige0 <- function(formula, data, newdata, model, beta, y, ...,
 
 krigeST <- function(formula, data, newdata, modelList, y, ..., 
 		computeVar = FALSE, fullCovariance = FALSE) {
+  if (!inherits(modelList, "StVariogramModel"))
+    warning("\"modelList\" should be of class \"StVariogramModel\"; no further checks for a proper model will made.")
   
 	if (is(data, "ST") && is(newdata, "ST")) {
 		stopifnot(identical(proj4string(data@sp), proj4string(newdata@sp)))
 		stopifnot(is(data, "STFDF") || 
 			(is(data, "STSDF") && modelList$stModel == "sumMetric"))
 	}
-  
-	# maintaining jss816 code compatibility:
-	if(is.null(modelList$stModel))
-		modelList$stModel <- "separable"
   
 	lst = extractFormula(formula, data, newdata)
 	X = lst$X

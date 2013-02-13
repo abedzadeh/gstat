@@ -2,7 +2,7 @@
 R version 2.15.2 (2012-10-26) -- "Trick or Treat"
 Copyright (C) 2012 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
-Platform: x86_64-pc-linux-gnu (64-bit)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -21,6 +21,7 @@ Type 'q()' to quit R.
 > pkgname <- "gstat"
 > source(file.path(R.home("share"), "R", "examples-header.R"))
 > options(warn = 1)
+> options(pager = "console")
 > library('gstat')
 Loading required package: sp
 > 
@@ -63,59 +64,51 @@ Loading required package: sp
 > 
 > ### ** Examples
 > 
-> # separable model: spatial and temporal sill and nugget will be ignored
-> # and kept constant at 1 and 0 respectively. Only a joint sill and nugget
-> # are used.
-> separableModel <- list(space=vgm(1,"Exp", 147, 0),
-+                        time =vgm(1,"Exp", 3.5, 0),
-+                        sill=40, nugget=16, stModel="separable")
-> 
-> # product sum model: spatial and temporal nugget will be ignored and kept
-> # constant at 0. Only a joint nugget is used.
-> prodSumModel <- list(space=vgm(39, "Sph", 343, 0),
-+                      time= vgm(36, "Exp",   3, 0), 
-+                      sill=41, nugget=17, stModel="productSum")
-> 
-> # sum metric model: spatial, temporal and joint nugget will be estimated
-> sumMetricModel <- list(space=vgm( 6.9, "Lin", 200, 3.0),
-+                        time =vgm(10.3, "Lin",  15, 3.6),
-+                        joint=vgm(37.2, "Exp",  84,11.7),
-+                        nugget=6.7, stAni=77.7, stModel="sumMetric")
-> 
->                        
-> # simplified sumMetric model, only a overall nugget is fitted. The spatial, 
-> # temporal and jont nuggets are set to 0.
-> simpleSumMetricModel <- list(space=vgm(20,"Lin", 150, 0),
-+                              time =vgm(20,"Lin", 10,  0),
-+                              joint=vgm(20,"Exp", 150, 0),
-+                              nugget=1, stAni=15, stModel="simpleSumMetric")
-> 
-> # metric model
-> metricModel <- list(joint=vgm(60, "Exp", 150, 10),
-+                     stAni=60, stModel="metric")
+> # separable model: spatial and temporal sill will be ignored
+> # and kept constant at 1-nugget respectively. A joint sill is used.
+> separableModel <- vgmST("separable",
++                         space=vgm(0.9,"Exp", 147, 0.1),
++                         time =vgm(0.9,"Exp", 3.5, 0.1),
++                         sill=40)
 > 
 > data(vv)
-> fit.StVariogram(vv[1:77,],separableModel,method = "L-BFGS-B")$StVgmFit
+> fit.StVariogram(vv[1:77,], separableModel, method = "L-BFGS-B")
 $space
-  model psill    range
-1   Nug     0   0.0000
-2   Exp     1 109.0723
+  model     psill    range
+1   Nug 0.1070554   0.0000
+2   Exp 0.8929446 100.7215
 
 $time
-  model psill    range
-1   Nug     0 0.000000
-2   Exp     1 2.106038
+  model     psill    range
+1   Nug 0.1480403 0.000000
+2   Exp 0.8519597 2.148808
 
 $sill
     sill 
-42.84031 
-
-$nugget
-  nugget 
-9.585171 
+52.08374 
 
 $stModel
 [1] "separable"
+
+attr(,"class")
+[1] "StVariogramModel" "list"            
+attr(,"optim.output")
+attr(,"optim.output")$par
+    range.s    nugget.s     range.t    nugget.t        sill 
+100.7215051   0.1070554   2.1488082   0.1480403  52.0837398 
+
+attr(,"optim.output")$value
+[1] 2.867102
+
+attr(,"optim.output")$counts
+function gradient 
+      61       61 
+
+attr(,"optim.output")$convergence
+[1] 0
+
+attr(,"optim.output")$message
+[1] "CONVERGENCE: REL_REDUCTION_OF_F <= FACTR*EPSMCH"
 
 > 
 > 
@@ -201,7 +194,7 @@ $stModel
 > summary(fulmar)
       year            x                y               depth     
  Min.   :1998   Min.   :476210   Min.   :5694947   Min.   : 1.0  
- 1st Qu.:1998   1st Qu.:535522   1st Qu.:5806777   1st Qu.:13.0  
+ 1st Qu.:1998   1st Qu.:535523   1st Qu.:5806777   1st Qu.:13.0  
  Median :1999   Median :568618   Median :5896021   Median :25.0  
  Mean   :1999   Mean   :576982   Mean   :5889112   Mean   :23.6  
  3rd Qu.:1999   3rd Qu.:604579   3rd Qu.:5946550   3rd Qu.:32.0  
@@ -312,7 +305,7 @@ set idp = 0.5;
 > 
 > cleanEx()
 
-detaching ‘package:lattice’
+detaching 'package:lattice'
 
 > nameEx("hscat")
 > ### * hscat
@@ -369,7 +362,7 @@ detaching ‘package:lattice’
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
 
-detaching ‘package:lattice’
+detaching 'package:lattice'
 
 > nameEx("jura")
 > ### * jura
@@ -488,12 +481,11 @@ detaching ‘package:lattice’
 > ### Name: krige
 > ### Title: Simple, Ordinary or Universal, global or local, Point or Block
 > ###   Kriging, or simulation.
-> ### Aliases: krige krige0 krigeST krige.locations krige.spatial idw idw0
+> ### Aliases: krige krige0 krige.locations krige.spatial idw idw0
 > ###   idw.locations idw.spatial krige-methods idw-methods
 > ###   krige,formula,formula-method krige,formula,Spatial-method
 > ###   krige,formula,NULL-method idw,formula,formula-method
 > ###   idw,formula,Spatial-method idw,formula,ST-method
-> ###   krige,formula,ST-method
 > ### Keywords: models
 > 
 > ### ** Examples
@@ -642,6 +634,50 @@ Data attributes:
 > 
 > 
 > cleanEx()
+> nameEx("krigeST")
+> ### * krigeST
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: krigeST
+> ### Title: Ordinary global Spatio-Temporal Kriging
+> ### Aliases: krigeST krige,formula,ST-method
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> library(spacetime)
+> sumMetricVgm <- vgmST("sumMetric",
++                       space=vgm( 4.4, "Lin", 196.6,  3),
++                       time =vgm( 2.2, "Lin",   1.1,  2),
++                       joint=vgm(34.6, "Exp", 136.6, 12),
++                       stAni=51.7)
+> 
+> data(air)
+> 
+> rr <- rural[,"2005-06-01/2005-06-03"]
+> rr <- as(rr,"STSDF")
+> 
+> x1 <- seq(from=6,to=15,by=1)
+> x2 <- seq(from=48,to=55,by=1)
+> 
+> DE_gridded <- SpatialPoints(cbind(rep(x1,length(x2)), rep(x2,each=length(x1))), 
++                             proj4string=CRS(proj4string(rr@sp)))
+> gridded(DE_gridded) <- TRUE
+> DE_pred <- STF(sp=as(DE_gridded,"SpatialPoints"), time=rr@time)
+> DE_kriged <- krigeST(PM10~1, data=rr, newdata=DE_pred,
++                      modelList=sumMetricVgm)
+Warning in xts(matrix(1:nrow(x@time), dimnames = list(NULL, "timeIndex")),  :
+  'tzone' setting ignored for Date indexes
+> gridded(DE_kriged@sp) <- TRUE
+> stplot(DE_kriged)
+> 
+> 
+> 
+> cleanEx()
+
+detaching 'package:spacetime'
+
 > nameEx("krigeTg")
 > ### * krigeTg
 > 
@@ -670,7 +706,7 @@ Data attributes:
       0       0       0       0       0       0 
 > summary(x2$var1.pred-x1$var1TG.pred)
       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
--2.274e-13  0.000e+00  0.000e+00 -3.700e-15  0.000e+00  4.547e-13 
+-2.274e-13  0.000e+00  0.000e+00 -3.664e-15  0.000e+00  4.547e-13 
 > lambda = -0.25
 > m = fit.variogram(variogram((zinc^lambda-1)/lambda ~ 1,meuse), vgm(1, "Exp", 300))
 > x = krigeTg(zinc~1,meuse,meuse.grid,m,lambda=-.25)
@@ -707,7 +743,7 @@ Data attributes:
  1st Qu.: 41.75   1st Qu.:179358   1st Qu.:330771   1st Qu.: 0.800  
  Median : 82.50   Median :179945   Median :331558   Median : 1.900  
  Mean   : 82.50   Mean   :179989   Mean   :331614   Mean   : 3.109  
- 3rd Qu.:123.25   3rd Qu.:180626   3rd Qu.:332410   3rd Qu.: 3.725  
+ 3rd Qu.:123.25   3rd Qu.:180626   3rd Qu.:332411   3rd Qu.: 3.725  
  Max.   :164.00   Max.   :181390   Max.   :333611   Max.   :18.100  
                                                                     
      copper            lead             zinc             elev       
@@ -758,7 +794,7 @@ Data attributes:
 > 
 > cleanEx()
 
-detaching ‘package:lattice’
+detaching 'package:lattice'
 
 > nameEx("ncp.grid")
 > ### * ncp.grid
@@ -868,7 +904,7 @@ detaching ‘package:lattice’
  Max.   :7.700   Max.   :25.000   Max.   :847.0  
 > # open the following file with a jpg viewer:
 > system.file("external/oxford.jpg", package="gstat")
-[1] "/home/edzer/svn/gstat/gstat.Rcheck/gstat/external/oxford.jpg"
+[1] "C:/Users/b_grae02/Documents/r-forge/gstat/gstat.Rcheck/gstat/external/oxford.jpg"
 > 
 > 
 > 
@@ -895,7 +931,7 @@ detaching ‘package:lattice’
 > 
 > cleanEx()
 
-detaching ‘package:lattice’
+detaching 'package:lattice'
 
 > nameEx("plot.gstatVariogram")
 > ### * plot.gstatVariogram
@@ -1506,12 +1542,13 @@ Warning in plot.xy(xy.coords(x, y), type = type, ...) :
 +   variogram(log(zinc) ~ 1, meuse.ll)
 + }
 Loading required package: rgdal
-rgdal: version: 0.8-2, (SVN revision 416:417)
+rgdal: version: 0.8-5, (SVN revision 449)
 Geospatial Data Abstraction Library extensions to R successfully loaded
 Loaded GDAL runtime: GDAL 1.9.2, released 2012/10/08
-Path to GDAL shared files: /usr/share/gdal/1.9
-Loaded PROJ.4 runtime: Rel. 4.8.0, 6 March 2012, [PJ_VERSION: 480]
-Path to PROJ.4 shared files: (autodetected)
+Path to GDAL shared files: C:/Users/b_grae02/Documents/R/win-library/2.15/rgdal/gdal
+GDAL does not use iconv for recoding strings.
+Loaded PROJ.4 runtime: Rel. 4.7.1, 23 September 2009, [PJ_VERSION: 470]
+Path to PROJ.4 shared files: C:/Users/b_grae02/Documents/R/win-library/2.15/rgdal/proj
     np       dist     gamma dir.hor dir.ver   id
 1   57 0.07927429 0.1234479       0       0 var1
 2  299 0.16393279 0.2162185       0       0 var1
@@ -1534,7 +1571,7 @@ Path to PROJ.4 shared files: (autodetected)
 > 
 > cleanEx()
 
-detaching ‘package:rgdal’
+detaching 'package:rgdal'
 
 > nameEx("variogramLine")
 > ### * variogramLine
@@ -1610,35 +1647,39 @@ detaching ‘package:rgdal’
 > 
 > ### ** Examples
 > 
-> # separable model: spatial and temporal sill and nugget will be ignored
-> # and kept constant at 1 and 0 respectively. Only a joint sill and nugget
-> # are used.
-> separableModel <- list(space=vgm(1,"Exp", 147, 0),
-+                        time =vgm(1,"Exp", 3.5, 0),
-+                        sill=40, nugget=16, stModel="separable")
+> # separable model: spatial and temporal sill will be ignored
+> # and kept constant at 1-nugget respectively. A joint sill is used.
+> separableModel <- vgmST("separable", 
++                         space=vgm(0.9,"Exp", 147, 0.1),
++                         time =vgm(0.9,"Exp", 3.5, 0.1),
++                         sill=40)
 > 
 > # product sum model: spatial and temporal nugget will be ignored and kept
 > # constant at 0. Only a joint nugget is used.
-> prodSumModel <- list(space=vgm(39, "Sph", 343, 0),
-+                      time= vgm(36, "Exp",   3, 0), 
-+                      sill=41, nugget=17, stModel="productSum")
+> prodSumModel <- vgmST("productSum",
++                       space=vgm(39, "Sph", 343, 0),
++                       time= vgm(36, "Exp",   3, 0), 
++                       sill=41, nugget=17)
 > 
 > # sum metric model: spatial, temporal and joint nugget will be estimated
-> sumMetricModel <- list(space=vgm( 6.9, "Lin", 200, 3.0),
-+                        time =vgm(10.3, "Lin",  15, 3.6),
-+                        joint=vgm(37.2, "Exp",  84,11.7),
-+                        stAni=77.7, stModel="sumMetric")
+> sumMetricModel <- vgmST("sumMetric",
++                         space=vgm( 6.9, "Lin", 200, 3.0),
++                         time =vgm(10.3, "Lin",  15, 3.6),
++                         joint=vgm(37.2, "Exp",  84,11.7),
++                         stAni=77.7)
 >                        
 > # simplified sumMetric model, only a overall nugget is fitted. The spatial, 
 > # temporal and jont nuggets are set to 0.
-> simpleSumMetricModel <- list(space=vgm(20,"Lin", 150, 0),
-+                              time =vgm(20,"Lin", 10,  0),
-+                              joint=vgm(20,"Exp", 150, 0),
-+                              nugget=1, stAni=15, stModel="simpleSumMetric")
+> simpleSumMetricModel <- vgmST("simpleSumMetric",
++                               space=vgm(20,"Lin", 150, 0),
++                               time =vgm(20,"Lin", 10,  0),
++                               joint=vgm(20,"Exp", 150, 0),
++                               nugget=1, stAni=15)
 > 
 > # metric model
-> metricModel <- list(joint=vgm(60, "Exp", 150, 10),
-+                     stAni=60, stModel="metric")
+> metricModel <- vgmST("metric",
++                      joint=vgm(60, "Exp", 150, 10),
++                      stAni=60)
 >                        
 > data(vv)
 > 
@@ -1655,7 +1696,7 @@ Loading required package: lattice
 > 
 > cleanEx()
 
-detaching ‘package:lattice’
+detaching 'package:lattice'
 
 > nameEx("vgm")
 > ### * vgm
@@ -1765,8 +1806,57 @@ detaching ‘package:lattice’
 > 
 > cleanEx()
 
-detaching ‘package:lattice’
+detaching 'package:lattice'
 
+> nameEx("vgmST")
+> ### * vgmST
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: vgmST
+> ### Title: Constructing a spatio-temporal variogram
+> ### Aliases: vgmST
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> # separable model: spatial and temporal sill will be ignored
+> # and kept constant at 1-nugget respectively. A joint sill is used.
+> separableModel <- vgmST("separable", 
++                         space=vgm(0.9,"Exp", 147, 0.1),
++                         time =vgm(0.9,"Exp", 3.5, 0.1),
++                         sill=40)
+> 
+> # product sum model: spatial and temporal nugget will be ignored and kept
+> # constant at 0. Only a joint nugget is used.
+> prodSumModel <- vgmST("productSum",
++                       space=vgm(39, "Sph", 343, 0),
++                       time= vgm(36, "Exp",   3, 0), 
++                       sill=41, nugget=17)
+> 
+> # sum metric model: spatial, temporal and joint nugget will be estimated
+> sumMetricModel <- vgmST("sumMetric",
++                         space=vgm( 6.9, "Lin", 200, 3.0),
++                         time =vgm(10.3, "Lin",  15, 3.6),
++                         joint=vgm(37.2, "Exp",  84,11.7),
++                         stAni=77.7)
+>                        
+> # simplified sumMetric model, only a overall nugget is fitted. The spatial, 
+> # temporal and jont nuggets are set to 0.
+> simpleSumMetricModel <- vgmST("simpleSumMetric",
++                               space=vgm(20,"Lin", 150, 0),
++                               time =vgm(20,"Lin", 10,  0),
++                               joint=vgm(20,"Exp", 150, 0),
++                               nugget=1, stAni=15)
+> 
+> # metric model
+> metricModel <- vgmST("metric",
++                      joint=vgm(60, "Exp", 150, 10),
++                      stAni=60)
+> 
+> 
+> 
+> cleanEx()
 > nameEx("vv")
 > ### * vv
 > 
@@ -1954,7 +2044,7 @@ Data attributes:
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  13.028 0.272 13.281 0 0 
+Time elapsed:  21.8 0.2 22.07 NA NA 
 > grDevices::dev.off()
 null device 
           1 

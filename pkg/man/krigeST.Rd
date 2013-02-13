@@ -72,10 +72,11 @@ Computers \& Geosciences, 30: 683-691.
 
 \examples{
 library(spacetime)
-sumMetricVgm <- list(space=vgm( 4.4, "Lin", 196.6,  3),
-                     time =vgm( 2.2, "Lin",   1.1,  2),
-                     joint=vgm(34.6, "Exp", 136.6, 12),
-                     stAni=51.7, stModel="sumMetric")
+sumMetricVgm <- vgmST("sumMetric",
+                      space=vgm( 4.4, "Lin", 196.6,  3),
+                      time =vgm( 2.2, "Lin",   1.1,  2),
+                      joint=vgm(34.6, "Exp", 136.6, 12),
+                      stAni=51.7)
 
 data(air)
 
@@ -91,6 +92,7 @@ gridded(DE_gridded) <- TRUE
 DE_pred <- STF(sp=as(DE_gridded,"SpatialPoints"), time=rr@time)
 DE_kriged <- krigeST(PM10~1, data=rr, newdata=DE_pred,
                      modelList=sumMetricVgm)
+gridded(DE_kriged@sp) <- TRUE
 stplot(DE_kriged)
 }
 \keyword{ models }
