@@ -93,8 +93,7 @@ krige0 <- function(formula, data, newdata, model, beta, y, ...,
 
 krigeST <- function(formula, data, newdata, modelList, y, ..., 
 		computeVar = FALSE, fullCovariance = FALSE) {
-  if (!inherits(modelList, "StVariogramModel"))
-    warning("\"modelList\" should be of class \"StVariogramModel\"; no further checks for a proper model will made.")
+	stopifnot(inherits(modelList, "StVariogramModel"))
   
 	if (is(data, "ST") && is(newdata, "ST")) {
 		stopifnot(identical(proj4string(data@sp), proj4string(newdata@sp)))
@@ -110,14 +109,14 @@ krigeST <- function(formula, data, newdata, modelList, y, ...,
 
 	V = covfn.ST(data, model = modelList)
 	v0 = covfn.ST(data, newdata, modelList)
-  if (is(data,"STSDF"))
-    d0 <- data[data@index[1,1],data@index[1,2],drop=F]
-  else
-    d0 = data[1, 1, drop=FALSE]
+	if (is(data,"STSDF"))
+		d0 <- data[data@index[1,1],data@index[1,2],drop=F]
+	else
+    	d0 = data[1, 1, drop=FALSE]
 	c0 = as.numeric(covfn.ST(d0, d0, modelList, separate = FALSE))
 	skwts = switch(modelList$stModel, 
                  separable=STsolve(V, v0, X), 
-                 CHsolve(V,cbind(v0,X))) # can CHsolve be simplified for the productSum and sumMetric model
+                 CHsolve(V, cbind(v0,X))) # can CHsolve be simplified for the productSum and sumMetric model
 	# ViX = skwts[,-(1:ncol(v0))]
 	# skwts = skwts[,1:ncol(v0)]
 	npts = prod(dim(newdata)[1:2])

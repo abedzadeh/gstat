@@ -1,58 +1,16 @@
 # constructiong spatio-temporal variogram models
 vgmST <- function(stModel, ..., space, time, joint, sill, nugget, stAni) {
+  stopifnot(is.character(stModel) && length(stModel)==1)
   vgmModel <- switch(stModel,
-                     separable=newSeparableVgm(space, time, sill),
-                     productSum=newProductSumVgm(space, time, sill, nugget),
-                     sumMetric=newSumMetricVgm(space, time, joint, stAni),
-                     simpleSumMetric=newSimpleSumMetricVgm(space, time, joint, nugget, stAni),
-                     metric=newMetricVgm(joint, stAni),
-                     stop("Only \"separable\", \"productSum\", \"sumMetric\", \"simpleSumMetric\" and \"metric\" are implemented yet."))
-  
+                     separable = list(space = space, time = time, sill = sill),
+                     productSum = list(space = space, time = time, sill = sill, nugget = nugget),
+                     sumMetric = list(space = space, time = time, joint = joint, stAni = stAni),
+                     simpleSumMetric = list(space = space, time = time, joint = joint, nugget = nugget, stAni = stAni),
+                     metric = list(joint = joint, stAni = stAni),
+                     stop(paste("model", stModel, "unknown")))
+  vgmModel$stModel <- stModel
   class(vgmModel) <- c("StVariogramModel","list")
-  return(vgmModel)
-}
-
-newSeparableVgm <- function(space, time, sill) {
-  stopifnot(!missing(space))
-  stopifnot(!missing(time))
-  stopifnot(!missing(sill))
-
-  return(list(space=space, time=time, sill=sill, stModel="separable"))
-}
-
-newProductSumVgm <- function(space, time, sill, nugget) {
-  stopifnot(!missing(space))
-  stopifnot(!missing(time))
-  stopifnot(!missing(sill))
-  stopifnot(!missing(nugget))
-  
-  return(list(space=space, time=time, sill=sill, nugget=nugget, stModel="productSum"))
-}
-
-newSumMetricVgm <- function(space, time, joint, stAni) {
-  stopifnot(!missing(space))
-  stopifnot(!missing(time))
-  stopifnot(!missing(joint))
-  stopifnot(!missing(stAni))
-  
-  return(list(space=space, time=time, joint=joint, stAni=stAni, stModel="sumMetric")) 
-}
-
-newSimpleSumMetricVgm <- function(space, time, joint, nugget, stAni) {
-  stopifnot(!missing(space))
-  stopifnot(!missing(time))
-  stopifnot(!missing(joint))
-  stopifnot(!missing(nugget))
-  stopifnot(!missing(stAni))
-  
-  return(list(space=space, time=time, joint=joint, stAni=stAni, nugget=nugget, stModel="simpleSumMetric")) 
-}
-
-newMetricVgm <- function(joint, stAni) {
-  stopifnot(!missing(joint))
-  stopifnot(!missing(stAni))
-  
-  return(list(joint=joint, stAni=stAni, stModel="metric"))
+  vgmModel
 }
 
 # calculating spatio-temporal variogram surfaces
@@ -66,7 +24,7 @@ variogramSurface <- function(model, dist_grid, covariance=FALSE, ...) {
          sumMetric=vgmSumMetric(model, dist_grid, covariance, ...),
          simpleSumMetric=vgmSimpleSumMetric(model, dist_grid, covariance, ...),
          metric=vgmMetric(model, dist_grid, covariance, ...),
-         stop("Only \"separable\", \"productSum\", \"sumMetric\", \"simpleSumMetric\" and \"metric\" are implemented yet."))
+         stop("Only \"separable\", \"productSum\", \"sumMetric\", \"simpleSumMetric\" and \"metric\" are implemented."))
 }
 
 # separable model: C_s * C_t
@@ -138,8 +96,7 @@ fit.StVariogram <- function(object, model, ..., wles=FALSE) {
   
   ret <- insertPar(pars.fit$par, model)
   attr(ret,"optim.output") <- pars.fit
-  
-  return(ret)
+  ret
 }
 
 insertPar <- function(par, model) {
@@ -149,7 +106,7 @@ insertPar <- function(par, model) {
          sumMetric=insertParSumMetric(par, model),
          simpleSumMetric=insertParSimpleSumMetric(par,model),
          metric=insertParMetric(par,model),
-         stop("Only \"separable\", \"productSum\", \"sumMetric\", \"simpleSumMetric\" and \"metric\" are implemented yet."))
+         stop("Only \"separable\", \"productSum\", \"sumMetric\", \"simpleSumMetric\" and \"metric\" are implemented."))
 }
 
 extractPar <- function(model) {
@@ -171,7 +128,7 @@ extractPar <- function(model) {
                            nugget = model$nugget, anis = model$stAni),
          metric=c(sill = model$joint$psill[2], range = model$joint$range[2], nugget = model$joint$psill[1],
                   anis = model$stAni),
-         stop("Only \"separable\", \"productSum\", \"sumMetric\", \"simpleSumMetric\" and \"metric\" are implemented yet."))
+         stop("Only \"separable\", \"productSum\", \"sumMetric\", \"simpleSumMetric\" and \"metric\" are implemented."))
 }
 
 insertParSeparable <- function(par, model) {
