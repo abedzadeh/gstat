@@ -3,7 +3,6 @@ Version: 1.0-16
 Date: 2013/02/14
 Title: spatial and spatio-temporal geostatistical modelling, prediction
         and simulation
-Author: Edzer Pebesma <edzer.pebesma@uni-muenster.de> and others
 Authors@R: c(person("Edzer", "Pebesma", role = c("aut", "cre"), email =
         "edzer.pebesma@uni-muenster.de"), person("Benedikt", "Graeler",
         role = "ctb"))
@@ -13,5 +12,3 @@ Imports: lattice, xts, zoo, spacetime (>= 1.0-0)
 Suggests: rgdal (>= 0.5.2), rgeos, fields, mapdata, lattice, maptools
 License: GPL (>= 2.0)
 URL: http://52north.org/geostatistics, https://r-forge.r-project.org/projects/gstat/
-Packaged: 2012-12-27 19:10:39 UTC; edzer
-Maintainer: Edzer Pebesma <edzer.pebesma@uni-muenster.de>
