@@ -40,7 +40,10 @@ StVgmLag = function(formula, data, dt, pseudo, ...) {
 		for (i in 1:d[2]) {
 			d0 = data[,i]
 			d0 = d0[.ValidObs(formula, d0),]
-			ret[[i]] = variogram(formula, d0,...)
+      if (length(d0)<=1)
+        ret[[i]] <- NULL
+      else
+        ret[[i]] = variogram(formula, d0,...)
 		}
 	} else {
 		for (i in 1:(d[2] - dt)) {
@@ -48,10 +51,14 @@ StVgmLag = function(formula, data, dt, pseudo, ...) {
 			d1 = d1[.ValidObs(formula, d1),]
 			d2 = data[, i + dt]
 			d2 = d2[.ValidObs(formula, d2),]
-			obj = gstat(NULL, paste("D", i, sep=""), formula, d1, 
-				set = list(zero_dist = 3))
-			obj = gstat(obj, paste("D", i+dt, sep=""), formula, d2)
-			ret[[i]] = variogram(obj, cross = "ONLY", pseudo = pseudo, ...)
+      if(length(d1)==0 || length(d2)==0)
+        ret[[i]] <- NULL
+      else {
+			  obj = gstat(NULL, paste("D", i, sep=""), formula, d1, 
+				  set = list(zero_dist = 3))
+			  obj = gstat(obj, paste("D", i+dt, sep=""), formula, d2)
+			  ret[[i]] = variogram(obj, cross = "ONLY", pseudo = pseudo, ...)
+      }
 		}
 	}
 	VgmAverage(ret)
