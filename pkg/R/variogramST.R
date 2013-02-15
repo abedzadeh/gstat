@@ -1,29 +1,27 @@
 VgmFillNA = function(x, boundaries) {
-	# pads the sample variogram with NA rows where no data are available.
+  # pads the sample variogram with NA rows where no data are available.
 	n = length(boundaries) - 1
 	ix = rep(NA, n)
 	#ix[which(1:n %in% findInterval(x$dist, boundaries))] = 1:nrow(x)
-	ix[findInterval(x$dist, boundaries)] = 1:nrow(x)
+	ix[ findInterval(x$dist, boundaries)] = 1:nrow(x)
 	# x$b = boundaries[-1]
-	# print(x[ix,])
 	x[ix,]
 }
 
-VgmAverage = function(ret, boundaries = NULL) {
+VgmAverage = function(ret, boundaries) {
 	# take out NULL variograms:
 	ret = ret[!sapply(ret, is.null)]
 	# take care of missing rows...
-	if (is.null(boundaries)) 
-		boundaries = attr(ret[[1]], "boundaries")
 	ret = lapply(ret, VgmFillNA, 
 			boundaries = c(0, 1e-6 * boundaries[2], boundaries[-1]))
-	# average/sum three columns:
-	gamma = apply(do.call(cbind, lapply(ret, function(x) x$gamma)), 1, mean,
-		na.rm = TRUE)
-	dist = apply(do.call(cbind, lapply(ret, function(x) x$dist)), 1, mean,
-		na.rm = TRUE)
+	# weighted average:
+  # sum np, weighted sum of gamma and dist devided by summed np
 	np = apply(do.call(cbind, lapply(ret, function(x) x$np)), 1, sum,
-		na.rm = TRUE)
+	           na.rm = TRUE)
+	gamma = apply(do.call(cbind, lapply(ret, function(x) x$gamma*x$np)), 1, sum,
+		na.rm = TRUE)/np
+	dist = apply(do.call(cbind, lapply(ret, function(x) x$dist*x$np)), 1, sum,
+		na.rm = TRUE)/np
 	v = data.frame(np = np, dist = dist, gamma = gamma)
 	class(v) = class(ret[[1]])
 	attr(v, "boundaries") = attr(ret[[1]], "boundaries")
@@ -39,21 +37,25 @@ StVgmLag = function(formula, data, dt, pseudo, ...) {
 	if (dt == 0) {
 		for (i in 1:d[2]) {
 			d0 = data[,i]
-			d0 = d0[.ValidObs(formula, d0),]
-      if (length(d0)<=1)
+      valid = .ValidObs(formula, d0)
+      if(sum(valid) <= 1)
         ret[[i]] <- NULL
-      else
-        ret[[i]] = variogram(formula, d0,...)
+      else {
+        d0 = d0[valid,]
+        ret[[i]] = variogram(formula, d0, ...)
+      }
 		}
 	} else {
 		for (i in 1:(d[2] - dt)) {
 			d1 = data[, i]
-			d1 = d1[.ValidObs(formula, d1),]
+      valid1 = .ValidObs(formula, d1)
 			d2 = data[, i + dt]
-			d2 = d2[.ValidObs(formula, d2),]
-      if(length(d1)==0 || length(d2)==0)
+			valid2 = .ValidObs(formula, d2)
+      if(sum(valid1)==0 || sum(valid2)==0)
         ret[[i]] <- NULL
       else {
+        d1 = d1[valid1,]
+        d2 = d2[valid2,]
 			  obj = gstat(NULL, paste("D", i, sep=""), formula, d1, 
 				  set = list(zero_dist = 3))
 			  obj = gstat(obj, paste("D", i+dt, sep=""), formula, d2)
@@ -61,31 +63,35 @@ StVgmLag = function(formula, data, dt, pseudo, ...) {
       }
 		}
 	}
-	VgmAverage(ret)
+	VgmAverage(ret, ...)
 }
 
-variogramST = function(formula, locations, data, ..., tlags = 0:15,
-		progress = TRUE, pseudo = TRUE) {
-	if (missing(data))
-		data = locations
+variogramST = function(formula, locations, data, ..., tlags = 0:15, cutoff, 
+                       width = cutoff/15, boundaries=seq(0,cutoff,width),
+                       progress = TRUE, pseudo = TRUE) {
+  if (missing(data))
+    data = locations
+  if(missing(cutoff))
+    cutoff <- spDists(t(data@sp@bbox),!is.projected(data@sp))[1,2]/3
 	stopifnot(is(data, "STFDF") || is(data, "STSDF"))
 	it = index(data@time)
-	if (is.regular(
-				as.zoo(matrix(1:length(it)), order.by = it), 
-				strict = TRUE)) {
+# 	if (is.regular(
+# 				as.zoo(matrix(1:length(it)), order.by = it), 
+# 				strict = TRUE)) {
 		twidth = diff(it)[1]
 		tlags = tlags[tlags <= min(max(tlags), length(unique(it)) - 1)]
-	} else {
-		warning("strictly irregular time steps were assumed to be regular")
-		twidth = mean(diff(it))
-	}
+# 	} else {
+# 		warning("strictly irregular time steps were assumed to be regular")
+# 		twidth = mean(diff(it))
+# 	}
 	ret = vector("list", length(tlags))
 	obj = NULL
 	t = twidth * tlags
 	if (progress)
 		pb = txtProgressBar(style = 3, max = length(tlags))
 	for (dt in seq(along = tlags)) {
-		ret[[dt]] = StVgmLag(formula, data, tlags[dt], pseudo = pseudo, ...)
+		ret[[dt]] = StVgmLag(formula, data, tlags[dt], pseudo = pseudo, 
+                         boundaries = boundaries, ...)
 		ret[[dt]]$id = paste("lag", dt - 1, sep="")
 		if (progress)
 			setTxtProgressBar(pb, dt)
