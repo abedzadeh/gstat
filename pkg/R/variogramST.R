@@ -175,7 +175,9 @@ plot.StVariogram = function(x, model=NULL, ..., col = bpy.colors(), xlab, ylab, 
 		x$id = factor(x$id, levels=unique(x$id))
 		bp = bpy.colors(length(levels(x$id)))
 		ps = list(superpose.line=list(col=bp), superpose.symbol=list(col=bp))
-		xyplot(f, x, groups = x$id, type='b', 
+		ylim = c(0, max(x$gamma) * 1.04)
+		xlim = c(0, max(x$dist) * 1.04)
+		xyplot(f, x, groups = x$id, type='b', ylim = ylim, xlim = xlim,
 				auto.key = list(space = "right"), xlab = xlab, 
 				par.settings = ps, ...)
 	}

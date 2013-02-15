@@ -226,7 +226,7 @@ dim(r5to10)
 @
 
 We can fit a spatio-temporal variogram the usual way, by passing an
-object of class {\tt STFDF}:
+object of class {\tt STFDF} (Pebesma, 2012):
 <<eval=FALSE>>=
 vv = variogram(PM10~1, r5to10, width=20, cutoff = 200)
 @
@@ -338,7 +338,7 @@ sepVgm <- vgmST("separable",
                 sill=45)
 
 sepVgm <- fit.StVariogram(vv, sepVgm, method = "L-BFGS-B")
-plot(vv,sepVgm)
+plot(vv, sepVgm)
 @
 
 \begin{figure}[hbt]
@@ -418,6 +418,10 @@ Spatial Data Analysis with R. Springer.
 
 \item Cressie, N. and C. Wikle, 2011. Statistics for Spatio-temporal
 Data. Wiley.
+
+\item Pebesma, E., 2012. spacetime: Spatio-Temporal Data
+in R. Journal of Statistical Software, volume 51, issue 7;
+\href{http://www.jstatsoft.org/v51/i07/}{1-30}.
 
 \item Pebesma, E.J., Wesseling, C.G., 1998. Gstat, a program for
 geostatistical modelling, prediction and simulation. Computers \&

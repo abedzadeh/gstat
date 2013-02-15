@@ -1,13 +1,14 @@
 # constructiong spatio-temporal variogram models
 vgmST <- function(stModel, ..., space, time, joint, sill, nugget, stAni) {
-  stopifnot(is.character(stModel) && length(stModel)==1)
-  vgmModel <- switch(stModel,
-                     separable = list(space = space, time = time, sill = sill),
-                     productSum = list(space = space, time = time, sill = sill, nugget = nugget),
-                     sumMetric = list(space = space, time = time, joint = joint, stAni = stAni),
-                     simpleSumMetric = list(space = space, time = time, joint = joint, nugget = nugget, stAni = stAni),
-                     metric = list(joint = joint, stAni = stAni),
-                     stop(paste("model", stModel, "unknown")))
+	stopifnot(is.character(stModel) && length(stModel)==1)
+	vgmModel <- switch(stModel,
+		separable = list(space = space, time = time, sill = sill),
+		productSum = list(space = space, time = time, sill = sill, nugget = nugget),
+		sumMetric = list(space = space, time = time, joint = joint, stAni = stAni),
+		simpleSumMetric = list(space = space, time = time, 
+			joint = joint, nugget = nugget, stAni = stAni),
+		metric = list(joint = joint, stAni = stAni),
+		stop(paste("model", stModel, "unknown")))
   vgmModel$stModel <- stModel
   class(vgmModel) <- c("StVariogramModel","list")
   vgmModel
