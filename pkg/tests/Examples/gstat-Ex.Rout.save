@@ -74,17 +74,17 @@ Loading required package: sp
 > fit.StVariogram(vv[1:77,], separableModel, method = "L-BFGS-B")
 $space
   model     psill    range
-1   Nug 0.1070554   0.0000
-2   Exp 0.8929446 100.7215
+1   Nug 0.2335489   0.0000
+2   Exp 0.7664511 138.6307
 
 $time
   model     psill    range
-1   Nug 0.1480403 0.000000
-2   Exp 0.8519597 2.148808
+1   Nug 0.3367276 0.000000
+2   Exp 0.6632724 5.959166
 
 $sill
     sill 
-52.08374 
+57.99471 
 
 $stModel
 [1] "separable"
@@ -94,14 +94,14 @@ attr(,"class")
 attr(,"optim.output")
 attr(,"optim.output")$par
     range.s    nugget.s     range.t    nugget.t        sill 
-100.7215051   0.1070554   2.1488082   0.1480403  52.0837398 
+138.6307142   0.2335489   5.9591656   0.3367276  57.9947149 
 
 attr(,"optim.output")$value
-[1] 2.867102
+[1] 3.788254
 
 attr(,"optim.output")$counts
 function gradient 
-      61       61 
+      77       77 
 
 attr(,"optim.output")$convergence
 [1] 0
@@ -2015,7 +2015,7 @@ Data attributes:
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  15.576 0.224 15.885 0 0 
+Time elapsed:  14.816 0.208 15.188 0 0 
 > grDevices::dev.off()
 null device 
           1 
