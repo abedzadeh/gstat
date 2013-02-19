@@ -12,11 +12,11 @@ install:
 check:
 	rm -f gstat_*tar.gz
 	make build
-	$(R) CMD check --as-cran gstat_*tar.gz
+	_R_CHECK_TIMINGS_=0 $(R) CMD check --as-cran gstat_*tar.gz
 
 build:
 	# make cl
-	_R_BUILD_RESAVE_DATA_=best _R_BUILD_COMPACT_VIGNETTES_=qpdf $(R) CMD build pkg --force --resave-data
+	_R_CHECK_TIMINGS_=0 _R_BUILD_RESAVE_DATA_=best _R_BUILD_COMPACT_VIGNETTES_=qpdf $(R) CMD build pkg --force --resave-data
 
 nvbuild:
 	$(R) CMD build --no-vignettes pkg --force

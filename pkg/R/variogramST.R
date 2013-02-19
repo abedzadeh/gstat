@@ -72,7 +72,8 @@ variogramST = function(formula, locations, data, ..., tlags = 0:15, cutoff,
   if (missing(data))
     data = locations
   if(missing(cutoff))
-    cutoff <- spDists(t(data@sp@bbox),!is.projected(data@sp))[1,2]/3
+    ll = !is.na(is.projected(data@sp)) && !is.projected(data@sp)
+    cutoff <- spDists(t(data@sp@bbox), longlat = ll)[1,2]/3
 	stopifnot(is(data, "STFDF") || is(data, "STSDF"))
 	it = index(data@time)
 # 	if (is.regular(
