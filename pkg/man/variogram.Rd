@@ -15,7 +15,6 @@ Calculates the sample variogram from data, or in case of a linear model
 is given, for the residuals, with options for directional, robust,
 and pooled variogram, and for irregular distance intervals.  
 }
-\synopsis{ variogram(object, ...) }
 \usage{
 \method{variogram}{gstat}(object, ...)
 \method{variogram}{formula}(formula, locations, data, ...)
