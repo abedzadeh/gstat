@@ -68,23 +68,23 @@ StVgmLag = function(formula, data, dt, pseudo, ...) {
 
 variogramST = function(formula, locations, data, ..., tlags = 0:15, cutoff, 
                        width = cutoff/15, boundaries=seq(0,cutoff,width),
-                       progress = TRUE, pseudo = TRUE) {
+                       progress = TRUE, pseudo = TRUE, assumeRegular=FALSE) {
   if (missing(data))
     data = locations
-  if(missing(cutoff))
+  if(missing(cutoff)) {
     ll = !is.na(is.projected(data@sp)) && !is.projected(data@sp)
     cutoff <- spDists(t(data@sp@bbox), longlat = ll)[1,2]/3
+  }
 	stopifnot(is(data, "STFDF") || is(data, "STSDF"))
 	it = index(data@time)
-# 	if (is.regular(
-# 				as.zoo(matrix(1:length(it)), order.by = it), 
-# 				strict = TRUE)) {
+	if (assumeRegular || is.regular(as.zoo(matrix(1:length(it)), order.by = it),
+                                  strict = TRUE)) {
 		twidth = diff(it)[1]
 		tlags = tlags[tlags <= min(max(tlags), length(unique(it)) - 1)]
-# 	} else {
-# 		warning("strictly irregular time steps were assumed to be regular")
-# 		twidth = mean(diff(it))
-# 	}
+	} else {
+		warning("strictly irregular time steps were assumed to be regular")
+		twidth = mean(diff(it))
+	}
 	ret = vector("list", length(tlags))
 	obj = NULL
 	t = twidth * tlags

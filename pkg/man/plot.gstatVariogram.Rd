@@ -60,7 +60,7 @@ than threshold will not be plotted}
 be unit converted and plotted as (integer) months, and no longer match the
 numeric representation of \code{yearmon}, which has years as unit }
 \item{wireframe}{logical; if TRUE, produce a wireframe plot}
-\item{both}{logica; if TRUE, plot model and sample variogram in a single
+\item{both}{logical; if TRUE, plot model and sample variogram in a single
 wireplot}
 }
 \value{

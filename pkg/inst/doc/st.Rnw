@@ -16,7 +16,7 @@
 
 \author{ \includegraphics[width=.4\columnwidth]{ifgi-logo_int}\\
 \href{mailto:edzer.pebesma@uni-muenster.de}{Edzer Pebesma},
-\href{mailto:benedict.graueler@uni-muenster.de}{Benedict Gr\"{a}ler}
+\href{mailto:ben.graeler@uni-muenster.de}{Benedikt Gr\"{a}ler}
 }
 \date{\small \today }
 
