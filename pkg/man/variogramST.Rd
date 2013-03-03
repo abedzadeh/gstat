@@ -7,7 +7,7 @@ Calculates the sample variogram from spatio-temporal data.
 \usage{
 variogramST(formula, locations, data, ..., tlags = 0:15,  cutoff,
 	width = cutoff/15, boundaries = seq(0, cutoff, width),
-	progress = TRUE, pseudo = TRUE, assumeRegular=FALSE)
+	progress = interactive(), pseudo = TRUE, assumeRegular=FALSE)
 }
 \arguments{
 \item{formula}{formula, specifying the dependent variable.}
@@ -26,7 +26,7 @@ data point pairs are grouped for semivariance estimates, by defualt the
   \code{cutoff} is devided into 15 equal lags.}
 \item{boundaries}{ numerical vector with distance interval upper boundaries; 
 values should be strictly increasing }
-\item{progress}{ logical; show text progress bar }
+\item{progress}{ logical; if TRUE, show text progress bar }
 \item{pseudo}{ integer; use pseudo cross variogram for computing
 time-lagged spatial variograms? -1: find out from coordinates -- if they
 are equal then yes, else no; 0: no; 1: yes. }

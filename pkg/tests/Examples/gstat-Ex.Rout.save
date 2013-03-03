@@ -1,6 +1,6 @@
 
-R version 2.15.2 (2012-10-26) -- "Trick or Treat"
-Copyright (C) 2012 The R Foundation for Statistical Computing
+R version 2.15.3 (2013-03-01) -- "Security Blanket"
+Copyright (C) 2013 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -541,7 +541,6 @@ detaching ‘package:lattice’
 > m <- vgm(.59, "Sph", 874, .04)
 > # five-fold cross validation:
 > x <- krige.cv(log(zinc)~1, meuse, m, nmax = 40, nfold=5)
-  |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%
 > bubble(x, "residual", main = "log(zinc): 5-fold CV residuals")
 > 
 > # multivariable; thanks to M. Rufino:
@@ -1365,7 +1364,7 @@ Warning in plot.xy(xy.coords(x, y), type = type, ...) :
 > ### Name: variogram
 > ### Title: Calculate Sample or Residual Variogram or Variogram Cloud
 > ### Aliases: variogram variogram.gstat variogram.formula variogram.default
-> ###   variogramST variogram.line print.gstatVariogram print.variogramCloud
+> ###   variogram.line print.gstatVariogram print.variogramCloud
 > ###   as.data.frame.variogramCloud
 > ### Keywords: models
 > 
@@ -1541,7 +1540,7 @@ Warning in plot.xy(xy.coords(x, y), type = type, ...) :
 +   variogram(log(zinc) ~ 1, meuse.ll)
 + }
 Loading required package: rgdal
-rgdal: version: 0.8-4, (SVN revision 431)
+rgdal: version: 0.8-5, (SVN revision 449)
 Geospatial Data Abstraction Library extensions to R successfully loaded
 Loaded GDAL runtime: GDAL 1.9.2, released 2012/10/08
 Path to GDAL shared files: /usr/share/gdal/1.9
@@ -1629,6 +1628,39 @@ detaching ‘package:rgdal’
 1 0.00 0.0000000
 2 0.50 0.0749375
 3 0.75 0.1122891
+> 
+> 
+> 
+> cleanEx()
+> nameEx("variogramST")
+> ### * variogramST
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: variogramST
+> ### Title: Calculate Spatio-Temporal Sample Variogram
+> ### Aliases: variogramST
+> ### Keywords: models
+> 
+> ### ** Examples
+> 
+> # The following spatio-temporal variogram has been calcualted through
+> # vv = variogramST(PM10~1, r5to10, width=20, cutoff = 200)
+> # in the vignette "st".
+> 
+> data(vv)
+> str(vv)
+Classes ‘StVariogram’ and 'data.frame':	175 obs. of  6 variables:
+ $ np      : num  3456 16554 21257 33547 26053 ...
+ $ dist    : num  13.8 29.5 49.1 70.4 91.6 ...
+ $ gamma   : num  11 23.4 29.6 31.2 34.8 ...
+ $ id      : chr  "lag0" "lag0" "lag0" "lag0" ...
+ $ timelag : num  0 0 0 0 0 0 0 0 0 0 ...
+ $ spacelag: num  10 30 50 70 90 110 130 150 170 190 ...
+ - attr(*, "boundaries")= num  0 20 40 60 80 100 120 140 160 180 ...
+ - attr(*, "na.action")=Class 'omit'  Named int 1
+  .. ..- attr(*, "names")= chr "1"
+> plot(vv)
 > 
 > 
 > 
@@ -2015,7 +2047,7 @@ Data attributes:
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  14.816 0.208 15.188 0 0 
+Time elapsed:  14.972 0.18 15.196 0 0 
 > grDevices::dev.off()
 null device 
           1 

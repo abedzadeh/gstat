@@ -20,8 +20,8 @@ is called with a different set of parameters.
 \usage{
 \method{variogram}{gstat}(object, ...)
 \method{variogram}{formula}(object, locations = coordinates(data), data, ...)
-\method{variogram}{default}(object, locations, X, cutoff, width = cutoff/15, alpha =
-	0, beta = 0, tol.hor = 90/length(alpha), tol.ver =
+\method{variogram}{default}(object, locations, X, cutoff, width = cutoff/15,
+	alpha = 0, beta = 0, tol.hor = 90/length(alpha), tol.ver =
 	90/length(beta), cressie = FALSE, dX = numeric(0), boundaries =
 	numeric(0), cloud = FALSE, trend.beta = NULL, debug.level = 1,
 	cross = TRUE, grid, map = FALSE, g = NULL, ..., projected = TRUE, 
