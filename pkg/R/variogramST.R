@@ -48,19 +48,20 @@ StVgmLag = function(formula, data, dt, pseudo, ...) {
 	} else {
 		for (i in 1:(d[2] - dt)) {
 			d1 = data[, i]
-      valid1 = .ValidObs(formula, d1)
+			valid1 = .ValidObs(formula, d1)
 			d2 = data[, i + dt]
 			valid2 = .ValidObs(formula, d2)
-      if(sum(valid1)==0 || sum(valid2)==0)
-        ret[[i]] <- NULL
-      else {
-        d1 = d1[valid1,]
-        d2 = d2[valid2,]
-			  obj = gstat(NULL, paste("D", i, sep=""), formula, d1, 
-				  set = list(zero_dist = 3))
-			  obj = gstat(obj, paste("D", i+dt, sep=""), formula, d2)
-			  ret[[i]] = variogram(obj, cross = "ONLY", pseudo = pseudo, ...)
-      }
+			if(sum(valid1)==0 || sum(valid2)==0)
+				ret[[i]] <- NULL
+			else {
+				d1 = d1[valid1,]
+				d2 = d2[valid2,]
+				obj = gstat(NULL, paste("D", i, sep=""), formula, d1, 
+					set = list(zero_dist = 3), beta = 0)
+				obj = gstat(obj, paste("D", i+dt, sep=""), formula, d2, 
+					beta = 0)
+				ret[[i]] = variogram(obj, cross = "ONLY", pseudo = pseudo, ...)
+			}
 		}
 	}
 	VgmAverage(ret, ...)
@@ -68,7 +69,8 @@ StVgmLag = function(formula, data, dt, pseudo, ...) {
 
 variogramST = function(formula, locations, data, ..., tlags = 0:15, cutoff, 
                        width = cutoff/15, boundaries=seq(0,cutoff,width),
-                       progress = interactive(), pseudo = TRUE, assumeRegular=FALSE) {
+                       progress = interactive(), pseudo = TRUE, 
+					   assumeRegular=FALSE) {
   if (missing(data))
     data = locations
   if(missing(cutoff)) {
