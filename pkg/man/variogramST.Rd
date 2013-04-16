@@ -7,7 +7,7 @@ Calculates the sample variogram from spatio-temporal data.
 \usage{
 variogramST(formula, locations, data, ..., tlags = 0:15,  cutoff,
 	width = cutoff/15, boundaries = seq(0, cutoff, width),
-	progress = interactive(), pseudo = TRUE, assumeRegular=FALSE, na.omit=TRUE)
+	progress = interactive(), pseudo = TRUE, assumeRegular=FALSE, na.omit=FALSE)
 }
 \arguments{
 \item{formula}{formula, specifying the dependent variable.}
@@ -34,7 +34,7 @@ are equal then yes, else no; 0: no; 1: yes. }
   The first time step is assumed to be representative for the whole series. Note,
   that temporal lags are considered by index, and no check is made whether pairs
   actually have the desired separating distance.}
-\item{na.omit}{shall all \code{NA} values in the spatio-temporal variogram be dropped? In case where complete rows or columns in the variogram consists of \code{NA} only, the plots produce a distorted picture.}
+\item{na.omit}{shall all \code{NA} values in the spatio-temporal variogram be dropped? In case where complete rows or columns in the variogram consists of \code{NA} only, \code{plot} might produce a distorted picture.}
 }
 
 \value{The spatio-temporal sample variogram contains besides the fields 

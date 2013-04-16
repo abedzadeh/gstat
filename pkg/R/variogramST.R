@@ -70,7 +70,7 @@ StVgmLag = function(formula, data, dt, pseudo, ...) {
 variogramST = function(formula, locations, data, ..., tlags = 0:15, cutoff, 
                        width = cutoff/15, boundaries=seq(0,cutoff,width),
                        progress = interactive(), pseudo = TRUE, 
-                       assumeRegular=FALSE, na.omit=TRUE) {
+                       assumeRegular=FALSE, na.omit=FALSE) {
   if (missing(data))
     data = locations
   if(missing(cutoff)) {
