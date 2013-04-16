@@ -7,7 +7,7 @@ Calculates the sample variogram from spatio-temporal data.
 \usage{
 variogramST(formula, locations, data, ..., tlags = 0:15,  cutoff,
 	width = cutoff/15, boundaries = seq(0, cutoff, width),
-	progress = interactive(), pseudo = TRUE, assumeRegular=FALSE)
+	progress = interactive(), pseudo = TRUE, assumeRegular=FALSE, na.omit=TRUE)
 }
 \arguments{
 \item{formula}{formula, specifying the dependent variable.}
@@ -22,8 +22,8 @@ variogramST(formula, locations, data, ..., tlags = 0:15,  cutoff,
 are included in semivariance estimates; as a default, the
 length of the diagonal of the box spanning the data is divided by three. }
 \item{width}{ the width of subsequent distance intervals into which
-data point pairs are grouped for semivariance estimates, by defualt the 
-  \code{cutoff} is devided into 15 equal lags.}
+data point pairs are grouped for semivariance estimates, by default the 
+  \code{cutoff} is divided into 15 equal lags.}
 \item{boundaries}{ numerical vector with distance interval upper boundaries; 
 values should be strictly increasing }
 \item{progress}{ logical; if TRUE, show text progress bar }
@@ -31,9 +31,10 @@ values should be strictly increasing }
 time-lagged spatial variograms? -1: find out from coordinates -- if they
 are equal then yes, else no; 0: no; 1: yes. }
 \item{assumeRegular}{logical; whether the time series should be assumed regular. 
-  The first tiemstep is assumed to be representative for the whole series. Note,
+  The first time step is assumed to be representative for the whole series. Note,
   that temporal lags are considered by index, and no check is made whether pairs
   actually have the desired separating distance.}
+\item{na.omit}{shall all \code{NA} values in the spatio-temporal variogram be dropped? In case where complete rows or columns in the variogram consists of \code{NA} only, the plots produce a distorted picture.}
 }
 
 \value{The spatio-temporal sample variogram contains besides the fields 

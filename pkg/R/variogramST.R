@@ -70,7 +70,7 @@ StVgmLag = function(formula, data, dt, pseudo, ...) {
 variogramST = function(formula, locations, data, ..., tlags = 0:15, cutoff, 
                        width = cutoff/15, boundaries=seq(0,cutoff,width),
                        progress = interactive(), pseudo = TRUE, 
-					   assumeRegular=FALSE) {
+                       assumeRegular=FALSE, na.omit=TRUE) {
   if (missing(data))
     data = locations
   if(missing(cutoff)) {
@@ -108,14 +108,17 @@ variogramST = function(formula, locations, data, ..., tlags = 0:15, cutoff,
 		class(v$timelag) = "yearmon"
 	b = attr(ret[[2]], "boundaries")
 	b = c(0, b[2]/1e6, b[-1])
-	ix = findInterval(v$dist, b)
+	# ix = findInterval(v$dist, b) will use all spacelags
 	b = b[-2]
-	spacelags = c(0, b[-length(b)] + diff(b)/2)
-	v$spacelag = spacelags[ix]
+	# spacelags = c(0, b[-length(b)] + diff(b)/2) will use all spacelags
+	v$spacelag = c(0, b[-length(b)] + diff(b)/2) # spacelags[ix] will use all spacelags
 	if (isTRUE(!is.projected(data)))
 		attr(v$spacelag, "units") = "km"
 	class(v) = c("StVariogram", "data.frame")
-	na.omit(v)
+	if(na.omit)
+    return(na.omit(v))
+  else
+    return(v)
 }
 
 plot.StVariogram = function(x, model=NULL, ..., col = bpy.colors(), xlab, ylab, map = TRUE,
