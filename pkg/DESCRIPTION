@@ -4,7 +4,7 @@ Date: 2013/04/16
 Title: spatial and spatio-temporal geostatistical modelling, prediction and simulation
 Authors@R: c(person("Edzer", "Pebesma", role = c("aut", "cre"), email =
         "edzer.pebesma@uni-muenster.de"), person("Benedikt", "Graeler",
-        role = "ctb"))
+        role = "aut"))
 Description: variogram modelling; simple, ordinary and universal point or block (co)kriging, sequential Gaussian or indicator (co)simulation; variogram and variogram map plotting utility functions.
 Depends: R (>= 2.10), methods, sp (>= 0.9-72)
 Imports: lattice, xts, zoo, spacetime (>= 1.0-0)
