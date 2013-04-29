@@ -1,8 +1,7 @@
 
-R version 2.15.2 (2012-10-26) -- "Trick or Treat"
-Copyright (C) 2012 The R Foundation for Statistical Computing
-ISBN 3-900051-07-0
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 3.0.0 (2013-04-03) -- "Masked Marvel"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -20,7 +19,7 @@ Type 'q()' to quit R.
 + 	q()
 Loading required package: rgdal
 Loading required package: sp
-rgdal: version: 0.8-5, (SVN revision 449)
+rgdal: version: 0.8-8, (SVN revision 463)
 Geospatial Data Abstraction Library extensions to R successfully loaded
 Loaded GDAL runtime: GDAL 1.9.2, released 2012/10/08
 Path to GDAL shared files: /usr/share/gdal/1.9
@@ -70,10 +69,11 @@ suffix '.spam' to the function name, e.g. 'help( chol.spam)'.
 
 Attaching package: 'spam'
 
-The following object(s) are masked from 'package:base':
+The following object is masked from 'package:base':
 
     backsolve, forwardsolve
 
+Loading required package: maps
 > data(ozone2)
 > oz = SpatialPointsDataFrame(ozone2$lon.lat, 
 + 		data.frame(t(ozone2$y)), 
@@ -155,4 +155,4 @@ spDistsN1 Distances:
 > 
 > proc.time()
    user  system elapsed 
-  2.016   0.036   2.049 
+  1.924   0.064   1.983 

@@ -1,8 +1,7 @@
 
-R version 2.15.3 (2013-03-01) -- "Security Blanket"
+R version 3.0.0 (2013-04-03) -- "Masked Marvel"
 Copyright (C) 2013 The R Foundation for Statistical Computing
-ISBN 3-900051-07-0
-Platform: x86_64-pc-linux-gnu (64-bit)
+Platform: x86_64-unknown-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -24,7 +23,7 @@ Type 'q()' to quit R.
 > library('gstat')
 Loading required package: sp
 > 
-> assign(".oldSearch", search(), pos = 'CheckExEnv')
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 > cleanEx()
 > nameEx("coalash")
 > ### * coalash
@@ -1250,12 +1249,12 @@ Warning in v.level[(i * n + 1):((i + 1) * n)] = rep(m.name, n) :
  Max.   : 0.95700   Max.   : 0.27700  
 > summary(Chlorid92)
      Datum                          S411            S429            S849      
- Min.   :1992-01-16 00:00:00   Min.   :10.00   Min.   :53.70   Min.   :51.00  
- 1st Qu.:1993-03-23 00:00:00   1st Qu.:12.15   1st Qu.:57.23   1st Qu.:57.00  
- Median :1994-10-17 00:00:00   Median :14.20   Median :59.00   Median :58.20  
- Mean   :1994-08-31 08:16:46   Mean   :15.30   Mean   :59.31   Mean   :58.26  
- 3rd Qu.:1996-01-16 00:00:00   3rd Qu.:17.20   3rd Qu.:61.48   3rd Qu.:60.00  
- Max.   :1997-03-25 00:00:00   Max.   :24.30   Max.   :65.00   Max.   :62.30  
+ Min.   :1992-01-15 23:00:00   Min.   :10.00   Min.   :53.70   Min.   :51.00  
+ 1st Qu.:1993-03-22 23:00:00   1st Qu.:12.15   1st Qu.:57.23   1st Qu.:57.00  
+ Median :1994-10-16 23:00:00   Median :14.20   Median :59.00   Median :58.20  
+ Mean   :1994-08-31 06:16:46   Mean   :15.30   Mean   :59.31   Mean   :58.26  
+ 3rd Qu.:1996-01-15 23:00:00   3rd Qu.:17.20   3rd Qu.:61.48   3rd Qu.:60.00  
+ Max.   :1997-03-24 23:00:00   Max.   :24.30   Max.   :65.00   Max.   :62.30  
                                NA's   :119     NA's   :121     NA's   :124    
       S854           S1502           S1584           S1591      
  Min.   :56.70   Min.   :21.90   Min.   :45.00   Min.   : 6.80  
@@ -1333,12 +1332,12 @@ Warning in v.level[(i * n + 1):((i + 1) * n)] = rep(m.name, n) :
 > # xyplot(y~x|Date, cl.st, asp="iso", layout=c(16,11))
 > summary(cl.st)
     Chloride         Station          Date                    
- Min.   :  4.40   S1502  : 161   Min.   :1992-01-16 00:00:00  
- 1st Qu.: 18.52   S1584  : 161   1st Qu.:1993-03-23 00:00:00  
- Median : 43.70   S1591  : 161   Median :1994-10-17 00:00:00  
- Mean   : 41.89   S2046  : 161   Mean   :1994-08-31 08:16:46  
- 3rd Qu.: 59.90   S2047  : 161   3rd Qu.:1996-01-16 00:00:00  
- Max.   :242.00   S2048  : 161   Max.   :1997-03-25 00:00:00  
+ Min.   :  4.40   S1502  : 161   Min.   :1992-01-15 23:00:00  
+ 1st Qu.: 18.52   S1584  : 161   1st Qu.:1993-03-22 23:00:00  
+ Median : 43.70   S1591  : 161   Median :1994-10-16 23:00:00  
+ Mean   : 41.89   S2046  : 161   Mean   :1994-08-31 06:16:46  
+ 3rd Qu.: 59.90   S2047  : 161   3rd Qu.:1996-01-15 23:00:00  
+ Max.   :242.00   S2048  : 161   Max.   :1997-03-24 23:00:00  
  NA's   :5050     (Other):4830                                
        x                   y           
  Min.   :-0.770000   Min.   :-0.12951  
@@ -1540,7 +1539,7 @@ Warning in plot.xy(xy.coords(x, y), type = type, ...) :
 +   variogram(log(zinc) ~ 1, meuse.ll)
 + }
 Loading required package: rgdal
-rgdal: version: 0.8-5, (SVN revision 449)
+rgdal: version: 0.8-8, (SVN revision 463)
 Geospatial Data Abstraction Library extensions to R successfully loaded
 Loaded GDAL runtime: GDAL 1.9.2, released 2012/10/08
 Path to GDAL shared files: /usr/share/gdal/1.9
@@ -2046,8 +2045,8 @@ Data attributes:
 > 
 > ### * <FOOTER>
 > ###
-> cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  14.972 0.18 15.196 0 0 
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  14.98 0.232 15.255 0 0 
 > grDevices::dev.off()
 null device 
           1 
