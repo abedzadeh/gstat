@@ -79,7 +79,7 @@ variogramST = function(formula, locations, data, ..., tlags = 0:15, cutoff,
   }
 	stopifnot(is(data, "STFDF") || is(data, "STSDF"))
 	it = index(data@time)
-	if (assumeRegular || is.regular(as.zoo(matrix(1:length(it)), order.by = it),
+	if (assumeRegular || is.regular(zoo(matrix(1:length(it)), order.by = it),
                                   strict = TRUE)) {
 		twidth = diff(it)[1]
 		tlags = tlags[tlags <= min(max(tlags), length(unique(it)) - 1)]
