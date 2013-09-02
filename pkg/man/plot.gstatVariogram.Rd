@@ -79,6 +79,7 @@ correctly. }
 \link{variogramLine},
 }
 \examples{
+library(sp)
 data(meuse)
 coordinates(meuse) = ~x+y
 vgm1 <- variogram(log(zinc)~1, meuse)

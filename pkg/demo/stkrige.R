@@ -1,4 +1,5 @@
 # Ben Graeler, Nov 20, 2012.
+library(sp)
 library(spacetime)
 library(gstat)
 

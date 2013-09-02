@@ -145,6 +145,7 @@ which merges slopes across years, but with year-dependent intercept.
 \seealso{ \link{predict.gstat}, \link{krige} }
 
 \examples{
+library(sp)
 data(meuse)
 # let's do some manual fitting of two direct variograms and a cross variogram
 g <- gstat(id = "ln.zinc", formula = log(zinc)~1, locations = ~x+y, 

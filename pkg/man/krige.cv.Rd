@@ -14,10 +14,12 @@ point (co)kriging, kriging in a local neighbourhood.  }
 gstat.cv(object, nfold, remove.all = FALSE, verbose = interactive(), 
 	all.residuals = FALSE, ...)
 krige.cv(formula, locations, ...)
-krige.cv.locations(formula, locations, data, model = NULL, ..., beta = NULL, nmax = Inf, 
-	nmin = 0, maxdist = Inf, nfold = nrow(data), verbose = interactive(), debug.level = 0)
-krige.cv.spatial(formula, locations, model = NULL, ..., beta = NULL, nmax = Inf, 
-	nmin = 0, maxdist = Inf, nfold = nrow(locations), verbose = interactive(), debug.level = 0)
+krige.cv.locations(formula, locations, data, model = NULL, ..., beta = NULL, 
+	nmax = Inf, nmin = 0, maxdist = Inf, nfold = nrow(data), 
+	verbose = interactive(), debug.level = 0)
+krige.cv.spatial(formula, locations, model = NULL, ..., beta = NULL, 
+	nmax = Inf, nmin = 0, maxdist = Inf, nfold = nrow(locations), 
+	verbose = interactive(), debug.level = 0)
 }
 \arguments{
   \item{object}{ object of class gstat; see function \link{gstat}}
@@ -100,6 +102,7 @@ data around from R to gstat. }
 \seealso{ \link{krige}, \link{gstat}, \link{predict.gstat} }
 
 \examples{
+library(sp)
 data(meuse)
 coordinates(meuse) <- ~x+y
 m <- vgm(.59, "Sph", 874, .04)

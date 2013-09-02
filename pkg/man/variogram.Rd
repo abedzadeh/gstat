@@ -179,6 +179,7 @@ to fit a variogram model to a sample variogram:
 \code{\link{variogramST}} for details on the spatio-temporal sample variogram.
 }
 \examples{
+library(sp)
 data(meuse)
 # no trend:
 coordinates(meuse) = ~x+y

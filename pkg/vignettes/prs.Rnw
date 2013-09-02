@@ -50,6 +50,7 @@ library(gstat)
 cluster = read.table(system.file("external/cluster.txt", package="gstat"),
 	header = TRUE)
 summary(cluster)
+library(sp)
 coordinates(cluster) = ~X+Y
 @
 The following commands specify a sequence of lag boundaries that

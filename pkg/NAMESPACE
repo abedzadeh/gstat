@@ -14,6 +14,7 @@ useDynLib(gstat,
 	gstat_variogram_values
 )
 
+import(methods)
 import(lattice)
 importFrom(zoo, zoo, is.regular)
 import(sp)

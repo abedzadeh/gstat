@@ -69,7 +69,7 @@ package \code{gstat} (remove the 88 from the colour strings to make
 a plot without alpha transparency on windows or X11):
 
 <<fig=FALSE>>=
-library(gstat)
+library(sp)
 data(meuse)
 class(meuse)
 names(meuse)
@@ -115,6 +115,7 @@ gridded(meuse.grid) = TRUE
 class(meuse.grid)
 image(meuse.grid["dist"])
 title("distance to river (red = 0)")
+library(gstat)
 zinc.idw = krige(zinc~1, meuse, meuse.grid)
 class(zinc.idw)
 spplot(zinc.idw["var1.pred"], main = "zinc inverse distance weighted interpolations")

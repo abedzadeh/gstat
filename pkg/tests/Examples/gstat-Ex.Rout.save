@@ -1,7 +1,7 @@
 
-R version 3.0.0 (2013-04-03) -- "Masked Marvel"
+R version 3.0.1 (2013-05-16) -- "Good Sport"
 Copyright (C) 2013 The R Foundation for Statistical Computing
-Platform: x86_64-unknown-linux-gnu (64-bit)
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -21,7 +21,6 @@ Type 'q()' to quit R.
 > source(file.path(R.home("share"), "R", "examples-header.R"))
 > options(warn = 1)
 > library('gstat')
-Loading required package: sp
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 > cleanEx()
@@ -124,6 +123,7 @@ attr(,"optim.output")$message
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > vgm1 <- variogram(log(zinc)~1, ~x+y, meuse)
 > fit.variogram(vgm1, vgm(1,"Sph",300,1))
@@ -134,6 +134,9 @@ attr(,"optim.output")$message
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("fit.variogram.gls")
 > ### * fit.variogram.gls
 > 
@@ -146,6 +149,7 @@ attr(,"optim.output")$message
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > coordinates(meuse) = ~x+y
 > ## Not run: 
@@ -155,6 +159,9 @@ attr(,"optim.output")$message
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("fit.variogram.reml")
 > ### * fit.variogram.reml
 > 
@@ -167,6 +174,7 @@ attr(,"optim.output")$message
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > fit.variogram.reml(log(zinc)~1, ~x+y, meuse, model = vgm(1, "Sph", 900,1))
   model      psill range
@@ -176,6 +184,9 @@ attr(,"optim.output")$message
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("fulmar")
 > ### * fulmar
 > 
@@ -223,6 +234,7 @@ attr(,"optim.output")$message
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > # let's do some manual fitting of two direct variograms and a cross variogram
 > g <- gstat(id = "ln.zinc", formula = log(zinc)~1, locations = ~x+y, 
@@ -303,7 +315,7 @@ set idp = 0.5;
 > 
 > cleanEx()
 
-detaching ‘package:lattice’
+detaching ‘package:lattice’, ‘package:sp’
 
 > nameEx("hscat")
 > ### * hscat
@@ -317,6 +329,7 @@ detaching ‘package:lattice’
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > coordinates(meuse) = ~x+y
 > hscat(log(zinc)~1, meuse, c(0, 80, 120, 250, 500, 1000))
@@ -324,6 +337,9 @@ detaching ‘package:lattice’
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("image")
 > ### * image
 > 
@@ -336,6 +352,7 @@ detaching ‘package:lattice’
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > data(meuse.grid)
 > g <- gstat(formula=log(zinc)~1,locations=~x+y,data=meuse,model=vgm(1,"Exp",300))
@@ -360,7 +377,7 @@ detaching ‘package:lattice’
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
 
-detaching ‘package:lattice’
+detaching ‘package:lattice’, ‘package:sp’
 
 > nameEx("jura")
 > ### * jura
@@ -449,6 +466,7 @@ detaching ‘package:lattice’
 > # the following commands create objects with factors instead
 > # of the integer codes for Landuse and Rock:
 > require(sp)
+Loading required package: sp
 > jura.pred = prediction.dat
 > jura.val = validation.dat
 > jura.grid = juragrid.dat
@@ -471,6 +489,9 @@ detaching ‘package:lattice’
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("krige")
 > ### * krige
 > 
@@ -488,6 +509,7 @@ detaching ‘package:lattice’
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > coordinates(meuse) = ~x+y
 > data(meuse.grid)
@@ -522,6 +544,9 @@ detaching ‘package:lattice’
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("krige.cv")
 > ### * krige.cv
 > 
@@ -535,6 +560,7 @@ detaching ‘package:lattice’
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > coordinates(meuse) <- ~x+y
 > m <- vgm(.59, "Sph", 874, .04)
@@ -631,6 +657,9 @@ Data attributes:
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("krigeST")
 > ### * krigeST
 > 
@@ -644,6 +673,7 @@ Data attributes:
 > ### ** Examples
 > 
 > library(spacetime)
+Loading required package: sp
 > sumMetricVgm <- vgmST("sumMetric",
 +                       space=vgm( 4.4, "Lin", 196.6,  3),
 +                       time =vgm( 2.2, "Lin",   1.1,  2),
@@ -673,7 +703,7 @@ Warning in xts(matrix(1:nrow(x@time), dimnames = list(NULL, "timeIndex")),  :
 > 
 > cleanEx()
 
-detaching ‘package:spacetime’
+detaching ‘package:spacetime’, ‘package:sp’
 
 > nameEx("krigeTg")
 > ### * krigeTg
@@ -687,6 +717,7 @@ detaching ‘package:spacetime’
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > coordinates(meuse) = ~x+y
 > data(meuse.grid)
@@ -721,6 +752,9 @@ detaching ‘package:spacetime’
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("meuse.all")
 > ### * meuse.all
 > 
@@ -942,6 +976,7 @@ detaching ‘package:lattice’
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > coordinates(meuse) = ~x+y
 > vgm1 <- variogram(log(zinc)~1, meuse)
@@ -972,6 +1007,9 @@ detaching ‘package:lattice’
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("plot.pointPairs")
 > ### * plot.pointPairs
 > 
@@ -1007,6 +1045,7 @@ detaching ‘package:lattice’
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > coordinates(meuse) = ~x+y
 > plot(variogram(log(zinc)~1, meuse, cloud=TRUE))
@@ -1018,6 +1057,9 @@ detaching ‘package:lattice’
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("predict.gstat")
 > ### * predict.gstat
 > 
@@ -1031,6 +1073,7 @@ detaching ‘package:lattice’
 > ### ** Examples
 > 
 > # generate 5 conditional simulations
+> library(sp)
 > data(meuse)
 > coordinates(meuse) = ~x+y
 > v <- variogram(log(zinc)~1, meuse)
@@ -1079,6 +1122,9 @@ detaching ‘package:lattice’
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("show.vgms")
 > ### * show.vgms
 > 
@@ -1249,12 +1295,12 @@ Warning in v.level[(i * n + 1):((i + 1) * n)] = rep(m.name, n) :
  Max.   : 0.95700   Max.   : 0.27700  
 > summary(Chlorid92)
      Datum                          S411            S429            S849      
- Min.   :1992-01-15 23:00:00   Min.   :10.00   Min.   :53.70   Min.   :51.00  
- 1st Qu.:1993-03-22 23:00:00   1st Qu.:12.15   1st Qu.:57.23   1st Qu.:57.00  
- Median :1994-10-16 23:00:00   Median :14.20   Median :59.00   Median :58.20  
- Mean   :1994-08-31 06:16:46   Mean   :15.30   Mean   :59.31   Mean   :58.26  
- 3rd Qu.:1996-01-15 23:00:00   3rd Qu.:17.20   3rd Qu.:61.48   3rd Qu.:60.00  
- Max.   :1997-03-24 23:00:00   Max.   :24.30   Max.   :65.00   Max.   :62.30  
+ Min.   :1992-01-16 00:00:00   Min.   :10.00   Min.   :53.70   Min.   :51.00  
+ 1st Qu.:1993-03-23 00:00:00   1st Qu.:12.15   1st Qu.:57.23   1st Qu.:57.00  
+ Median :1994-10-17 00:00:00   Median :14.20   Median :59.00   Median :58.20  
+ Mean   :1994-08-31 08:16:46   Mean   :15.30   Mean   :59.31   Mean   :58.26  
+ 3rd Qu.:1996-01-16 00:00:00   3rd Qu.:17.20   3rd Qu.:61.48   3rd Qu.:60.00  
+ Max.   :1997-03-25 00:00:00   Max.   :24.30   Max.   :65.00   Max.   :62.30  
                                NA's   :119     NA's   :121     NA's   :124    
       S854           S1502           S1584           S1591      
  Min.   :56.70   Min.   :21.90   Min.   :45.00   Min.   : 6.80  
@@ -1332,12 +1378,12 @@ Warning in v.level[(i * n + 1):((i + 1) * n)] = rep(m.name, n) :
 > # xyplot(y~x|Date, cl.st, asp="iso", layout=c(16,11))
 > summary(cl.st)
     Chloride         Station          Date                    
- Min.   :  4.40   S1502  : 161   Min.   :1992-01-15 23:00:00  
- 1st Qu.: 18.52   S1584  : 161   1st Qu.:1993-03-22 23:00:00  
- Median : 43.70   S1591  : 161   Median :1994-10-16 23:00:00  
- Mean   : 41.89   S2046  : 161   Mean   :1994-08-31 06:16:46  
- 3rd Qu.: 59.90   S2047  : 161   3rd Qu.:1996-01-15 23:00:00  
- Max.   :242.00   S2048  : 161   Max.   :1997-03-24 23:00:00  
+ Min.   :  4.40   S1502  : 161   Min.   :1992-01-16 00:00:00  
+ 1st Qu.: 18.52   S1584  : 161   1st Qu.:1993-03-23 00:00:00  
+ Median : 43.70   S1591  : 161   Median :1994-10-17 00:00:00  
+ Mean   : 41.89   S2046  : 161   Mean   :1994-08-31 08:16:46  
+ 3rd Qu.: 59.90   S2047  : 161   3rd Qu.:1996-01-16 00:00:00  
+ Max.   :242.00   S2048  : 161   Max.   :1997-03-25 00:00:00  
  NA's   :5050     (Other):4830                                
        x                   y           
  Min.   :-0.770000   Min.   :-0.12951  
@@ -1369,6 +1415,7 @@ Warning in plot.xy(xy.coords(x, y), type = type, ...) :
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(meuse)
 > # no trend:
 > coordinates(meuse) = ~x+y
@@ -1539,7 +1586,7 @@ Warning in plot.xy(xy.coords(x, y), type = type, ...) :
 +   variogram(log(zinc) ~ 1, meuse.ll)
 + }
 Loading required package: rgdal
-rgdal: version: 0.8-8, (SVN revision 463)
+rgdal: version: 0.8-11, (SVN revision 479M)
 Geospatial Data Abstraction Library extensions to R successfully loaded
 Loaded GDAL runtime: GDAL 1.9.2, released 2012/10/08
 Path to GDAL shared files: /usr/share/gdal/1.9
@@ -1567,7 +1614,7 @@ Path to PROJ.4 shared files: (autodetected)
 > 
 > cleanEx()
 
-detaching ‘package:rgdal’
+detaching ‘package:rgdal’, ‘package:sp’
 
 > nameEx("variogramLine")
 > ### * variogramLine
@@ -1795,9 +1842,10 @@ detaching ‘package:lattice’
 > 
 > ### ** Examples
 >  
-> library(lattice)
+> library(sp)
 > data(meuse)
 > coordinates(meuse) <- c("x", "y")
+> library(lattice)
 > mypanel = function(x,y,...) { 
 + 	vgm.panel.xyplot(x,y,...)
 + 	panel.abline(h=var(log(meuse$zinc)), color = 'red')
@@ -1808,7 +1856,7 @@ detaching ‘package:lattice’
 > 
 > cleanEx()
 
-detaching ‘package:lattice’
+detaching ‘package:lattice’, ‘package:sp’
 
 > nameEx("vgmST")
 > ### * vgmST
@@ -1894,6 +1942,7 @@ detaching ‘package:lattice’
 > 
 > ### ** Examples
 > 
+> library(sp)
 > data(walker)
 > summary(walker)
 Object of class SpatialPointsDataFrame
@@ -1937,6 +1986,9 @@ Data attributes:
 > 
 > 
 > cleanEx()
+
+detaching ‘package:sp’
+
 > nameEx("wind")
 > ### * wind
 > 
@@ -1993,6 +2045,7 @@ Data attributes:
 10        Clones  CLO        54d11'N        7d14'W     4.48
 11        Dublin  DUB        53d26'N        6d15'W     5.05
 12       Roslare  ROS 52d16'56.791"N 6d21'25.056"W     6.00
+> library(sp) # char2dms
 > wind.loc$y = as.numeric(char2dms(as.character(wind.loc[["Latitude"]])))
 > wind.loc$x = as.numeric(char2dms(as.character(wind.loc[["Longitude"]])))
 > coordinates(wind.loc) = ~x+y
@@ -2045,8 +2098,9 @@ Data attributes:
 > 
 > ### * <FOOTER>
 > ###
+> options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  14.98 0.232 15.255 0 0 
+Time elapsed:  15.901 0.3 16.25 0 0 
 > grDevices::dev.off()
 null device 
           1 
