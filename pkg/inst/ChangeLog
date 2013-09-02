@@ -1,3 +1,69 @@
+2013-07-09 15:12  edzer
+
+	* /pkg/DESCRIPTION: reversed import order of xts and zoo
+
+2013-06-30 15:35  edzer
+
+	* /pkg/inst/doc, /pkg/vignettes, /pkg/vignettes/gstat.Rnw,
+	  /pkg/vignettes/gstat.Rout.save, /pkg/vignettes/gstat.pdf,
+	  /pkg/vignettes/ifgi-logo_int.pdf, /pkg/vignettes/prs.Rnw,
+	  /pkg/vignettes/prs.Rout.save, /pkg/vignettes/prs.pdf,
+	  /pkg/vignettes/st.Rnw, /pkg/vignettes/st.pdf: moved vignettes to
+	  vignettes directory
+
+2013-06-17 08:41  edzer
+
+	* /pkg/NAMESPACE, /pkg/R/variogramST.R: changed as.zoo into zoo, to
+	  sync with spacetime-devel.
+
+2013-05-15 10:48  ben_graeler
+
+	* /pkg/demo/stkrige.R: - bug in stkrige.R: the change in the return
+	  value of fit.StVariogram has not been taken care of in the demo
+
+2013-04-29 18:13  edzer
+
+	* /pkg/tests/Examples/gstat-Ex.Rout.save,
+	  /pkg/tests/unproj.Rout.save, /pkg/tests/windst.Rout.save: clean
+	  make with new sp and spacetime
+
+2013-04-26 22:15  edzer
+
+	* /pkg/DESCRIPTION: changed Ben's role
+
+2013-04-16 15:11  ben_graeler
+
+	* /pkg/R/variogramST.R, /pkg/man/variogramST.Rd: - changed the
+	  defaul na.omit behavoiour to "FALSE"
+
+2013-04-16 13:49  ben_graeler
+
+	* /pkg/DESCRIPTION, /pkg/R/stVariogramModels.R,
+	  /pkg/R/variogramST.R, /pkg/man/variogramST.Rd: - introduced an
+	  option to not omit NAs in the sample variogram
+
+2013-04-15 15:12  edzer
+
+	* /pkg/src/lm.c: removed warning about subtracting pre-defined
+	  mean, as this is what the user asks for.
+
+2013-04-15 12:05  edzer
+
+	* /pkg/R/variogramST.R: have beta set in variogramST.
+
+2013-04-15 11:43  edzer
+
+	* /pkg/man/gstat.Rd: documented beta for the cross variogram case
+
+2013-04-15 11:41  edzer
+
+	* /pkg/R/variogram.gstat.R: beta was taken from the wrong object.
+
+2013-03-04 17:10  edzer
+
+	* /pkg/DESCRIPTION, /pkg/LICENCE: added LICENCE to DESCRIPTION;
+	  updated LICENCE
+
 2013-03-03 12:34  edzer
 
 	* /pkg/R/gstat.cv.R, /pkg/R/krige.cv.R, /pkg/R/variogramST.R,
