@@ -175,6 +175,7 @@ and note that here we see in the last figure (DESH \& DESN04) a pair
 of plots with nearly no cross correlation. This might have to do with
 the spatial distance between these two stations:
 <<>>=
+library(sp)
 print(spDists(r5to10[4:10,]@sp), digits=3)
 @
 (What is the spatial distance between stations DESH and DESN04?)

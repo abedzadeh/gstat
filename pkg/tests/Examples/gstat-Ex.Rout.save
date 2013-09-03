@@ -672,8 +672,8 @@ detaching ‘package:sp’
 > 
 > ### ** Examples
 > 
+> library(sp)
 > library(spacetime)
-Loading required package: sp
 > sumMetricVgm <- vgmST("sumMetric",
 +                       space=vgm( 4.4, "Lin", 196.6,  3),
 +                       time =vgm( 2.2, "Lin",   1.1,  2),
@@ -2100,7 +2100,7 @@ detaching ‘package:sp’
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  15.901 0.3 16.25 0 0 
+Time elapsed:  15.404 0.316 15.78 0 0 
 > grDevices::dev.off()
 null device 
           1 
