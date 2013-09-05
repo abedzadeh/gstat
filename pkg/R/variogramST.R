@@ -106,6 +106,8 @@ variogramST = function(formula, locations, data, ..., tlags = 0:15, cutoff,
 	v$timelag = rep(t, sapply(ret, nrow))
 	if (is(t, "yearmon"))
 		class(v$timelag) = "yearmon"
+  attr(v$timelag,"units") <- attr(twidth,"units")
+  
 	b = attr(ret[[2]], "boundaries")
 	b = c(0, b[2]/1e6, b[-1])
 	# ix = findInterval(v$dist, b) will use all spacelags
