@@ -181,7 +181,8 @@ covfn.ST = function(x, y = x, model, separate=T) {
            separable=covSep(x, y, model, separate),
            productSum=covProdSum(x, y, model),
            sumMetric=covSumMetric(x, y, model),
-           stop("Argument \"model$stModel\" must refer to one of \"separable\", \"productSum\" or \"sumMetric\"."))
+           metric=covMetric(x, y, model),
+           stop("Argument \"model$stModel\" must refer to one of \"separable\", \"productSum\", \"metric\" or \"sumMetric\"."))
 }
 
 covSep <- function(x, y, model, separate=TRUE) {
@@ -247,8 +248,8 @@ covSumMetric <- function(x, y, model) {
   sMat <- NULL
   tMat <- NULL
   for(r in 1:nrow(x@index)) {
-    sMat <- rbind(sMat,ds[x@index[r,1],y@index[,1]])
-    tMat <- rbind(tMat,dt[x@index[r,2],y@index[,2]])
+    sMat <- rbind(sMat, ds[x@index[r,1], y@index[,1]])
+    tMat <- rbind(tMat, dt[x@index[r,2], y@index[,2]])
   }
   Sm = variogramLine(model$space, covariance = TRUE, dist_vector = sMat)
   Tm = variogramLine(model$time, covariance = TRUE, dist_vector = tMat)
@@ -257,4 +258,35 @@ covSumMetric <- function(x, y, model) {
   Mm = variogramLine(model$joint, covariance = TRUE, dist_vector = h)
   
   return(Sm + Tm + Mm)
+}
+
+## metric model
+covMetric <- function(x, y, model) {
+  if(!class(x) %in% c("STFDF","STSDF", "STF", "STS") | !class(y) %in% c("STFDF","STSDF", "STF", "STS")) 
+    stop("Only dataframes of type STFDF or STSDF are supported.")
+  
+  ds = spDists(coordinates(x@sp), coordinates(y@sp))
+  dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+  
+  if (is(x, "STFDF") && is(y, "STFDF")) {
+    h  = sqrt(rep(ds,length(dt))^2 + (model$stAni * rep(dt,each=length(ds)))^2)
+    Mm = variogramLine(model$joint, covariance = TRUE, dist_vector = h)
+    
+    return(Mm)
+  } 
+  
+  if (is(x,"STFDF") | is(x,"STF")) x = as(x, "STS")
+  if (is(y,"STFDF") | is(y,"STF")) y = as(y, "STS")
+  
+  sMat <- NULL
+  tMat <- NULL
+  for(r in 1:nrow(x@index)) {
+    sMat <- rbind(sMat, ds[x@index[r,1], y@index[,1]])
+    tMat <- rbind(tMat, dt[x@index[r,2], y@index[,2]])
+  }
+
+  h  = sqrt(sMat^2 + (model$stAni * tMat)^2)
+  Mm = variogramLine(model$joint, covariance = TRUE, dist_vector = h)
+  
+  return(Mm)
 }
