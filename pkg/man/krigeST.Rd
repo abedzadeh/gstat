@@ -20,13 +20,11 @@ krigeST(formula, data, newdata, modelList, y, ..., computeVar = FALSE,
   for simple kriging also define \code{beta} (see below); for universal
   kriging, suppose \code{z} is linearly dependent on \code{x} and \code{y},
   use the formula \code{z~x+y}}
- \item{data}{ data frame: should contain the dependent variable, independent
-  variables, and coordinates, should be missing if locations contains data. }
- \item{newdata}{ data frame or Spatial object with prediction/simulation 
-  locations; should 
-  contain attribute columns with the independent variables (if present) and 
-  (if locations is a formula) the coordinates with names as defined in 
-  \code{locations} }
+ \item{data}{ ST object: should contain the dependent variable and independent
+  variables.}
+ \item{newdata}{ ST object with prediction/simulation locations in
+ space and time; should contain attribute columns with the independent variables
+ (if present).}
  \item{modelList}{ list with named elements: space, time and/or joint depending 
   on the spatio-temporal covariance family and an entry stModel. Currently 
   implemented families that may be used for stModel are \code{separable}, 

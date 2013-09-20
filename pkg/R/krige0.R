@@ -19,7 +19,7 @@ idw0 = function(formula, data, newdata, y) {
 	s0 = coordinates(newdata)
 	if (missing(y))
 		y = extractFormula(formula, data, newdata)$y
-	D = 1.0 / (spDists(s0, s) ** 2)
+	D = 1.0 / (spDists(s0, s) * 2)
 	sumD = apply(D, 1, sum)
 	D %*% y / sumD
 }
@@ -94,12 +94,10 @@ krige0 <- function(formula, data, newdata, model, beta, y, ...,
 krigeST <- function(formula, data, newdata, modelList, y, ..., 
 		computeVar = FALSE, fullCovariance = FALSE) {
 	stopifnot(inherits(modelList, "StVariogramModel"))
+	stopifnot(inherits(data, c("STF", "STS", "STI")) & inherits(newdata, c("STF", "STS", "STI"))) 
+	stopifnot(identical(proj4string(data@sp), proj4string(newdata@sp)))
   
-	if (is(data, "ST") && is(newdata, "ST")) {
-		stopifnot(identical(proj4string(data@sp), proj4string(newdata@sp)))
-		stopifnot(is(data, "STFDF") || 
-			(is(data, "STSDF") && modelList$stModel == "sumMetric"))
-	}
+  separate <- length(data) > 1 & length(newdata) > 1 & inherits(data, "STF") & inherits(newdata, "STF")
   
 	lst = extractFormula(formula, data, newdata)
 	X = lst$X
@@ -107,16 +105,18 @@ krigeST <- function(formula, data, newdata, modelList, y, ...,
 	if (missing(y))
 		y = lst$y
 
-	V = covfn.ST(data, model = modelList)
+	V = covfn.ST(data, model = modelList, separate=separate)
 	v0 = covfn.ST(data, newdata, modelList)
+
 	if (is(data,"STSDF"))
 		d0 <- data[data@index[1,1],data@index[1,2],drop=F]
 	else
     	d0 = data[1, 1, drop=FALSE]
 	c0 = as.numeric(covfn.ST(d0, d0, modelList, separate = FALSE))
-	skwts = switch(modelList$stModel, 
-                 separable=STsolve(V, v0, X), 
-                 CHsolve(V, cbind(v0,X))) # can CHsolve be simplified for the productSum and sumMetric model
+	if(modelList$stModel == "separable" & separate)
+    skwts <- STsolve(V, v0, X)
+  else 
+    skwts <- CHsolve(V, cbind(v0,X))
 	# ViX = skwts[,-(1:ncol(v0))]
 	# skwts = skwts[,1:ncol(v0)]
 	npts = prod(dim(newdata)[1:2])
@@ -176,81 +176,227 @@ STsolve = function(A, b, X) {
 	cbind(ret1, ret2)
 }
 
-covfn.ST = function(x, y = x, model, separate=T) {
+covfn.ST = function(x, y = x, model, ...) {
     switch(model$stModel,
-           separable=covSep(x, y, model, separate),
+           separable=covSeparable(x, y, model, ...),
            productSum=covProdSum(x, y, model),
            sumMetric=covSumMetric(x, y, model),
+           simpleSumMetric=covSimpleSumMetric(x, y, model),
            metric=covMetric(x, y, model),
-           stop("Argument \"model$stModel\" must refer to one of \"separable\", \"productSum\", \"metric\" or \"sumMetric\"."))
+           stop(paste("Provided spatio-temporal model (",model$stModel,") is not supported.",sep="")))
 }
 
-covSep <- function(x, y, model, separate=TRUE) {
-  if (is(model$space, "variogramModel")) 
-    Sm = variogramLine(model$space, covariance = TRUE, dist_vector = 
-      spDists(coordinates(x@sp), coordinates(y@sp)))*model$sill
-  else
-    Sm = model$space(x, y)
-  stopifnot(!is.null(Sm))
-  if (is(model$time, "variogramModel")) 
-    Tm = variogramLine(model$time, covariance = TRUE, dist_vector = 
-      abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-")))
-  else
-    Tm = model$time(x, y)
-  stopifnot(!is.null(Tm))
-  if (separate)
-    list(Sm = Sm, Tm = Tm)
-  else
-    Tm %x% Sm # kronecker product
+## covariance models
+####################
+
+# separable covariance model
+# covSep <- function(x, y, model, separate=TRUE) {
+#   if (is(model$space, "variogramModel")) 
+#     Sm = variogramLine(model$space, covariance = TRUE, dist_vector = 
+#       spDists(coordinates(x@sp), coordinates(y@sp)))*model$sill
+#   else
+#     Sm = model$space(x, y)
+#   stopifnot(!is.null(Sm))
+#   if (is(model$time, "variogramModel")) 
+#     Tm = variogramLine(model$time, covariance = TRUE, dist_vector = 
+#       abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-")))
+#   else
+#     Tm = model$time(x, y)
+#   stopifnot(!is.null(Tm))
+#   if (separate)
+#     list(Sm = Sm, Tm = Tm)
+#   else
+#     Tm %x% Sm # kronecker product
+# }
+
+covSeparable <- function(x, y, model, separate) {  
+  if(missing(separate))
+    separate <- inherits(x, "STF") & inherits(y, "STF") & length(x) > 1 & length(y) > 1
+  
+  # the STF case
+  if (inherits(x, "STF") & inherits(y, "STF")) {
+    # calculate all spatial and temporal distances
+    ds = spDists(coordinates(x@sp), coordinates(y@sp))
+    dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+    
+    # compose the cov-matrix
+    Sm = variogramLine(model$space, covariance = TRUE, dist_vector = ds)*model$sill
+    Tm = variogramLine(model$time, covariance = TRUE, dist_vector = dt)
+        
+    if (separate)
+      return(list(Sm = Sm, Tm = Tm))
+    else
+      return(Tm %x% Sm) # kronecker product
+  } 
+  
+  # separate makes only sense if both of x and y inherit STF
+  if(separate)
+    stop("An efficient inversion by separating the covarinace model is only possible if both of \"x\" and \"y\" inherit \"STF\"")
+  
+  # the STI case
+  if(inherits(x, "STI") | inherits(y, "STI")) {
+    # make sure that now both are of type STI
+    x <- as(x, "STI")
+    y <- as(y, "STI")
+    
+    # calculate all spatial and temporal distances
+    ds = spDists(coordinates(x@sp), coordinates(y@sp))
+    dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+    
+    # compose the cov-matrix
+    Sm = variogramLine(model$space, covariance = TRUE, dist_vector = ds)*model$sill
+    Tm = variogramLine(model$time, covariance = TRUE, dist_vector = dt)
+    
+    return(Sm * Tm)
+  }
+  
+  # the remaining cases, none of x and y is STI nor are both STF
+  # make sure both are of type STS
+  x <- as(x, "STS")
+  y <- as(y, "STS")
+  
+  # calculate all spatial and temporal distances
+  ds = spDists(coordinates(x@sp), coordinates(y@sp))
+  dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+  
+  # re-arrange the spatial and temporal distances
+  sMat <- matrix(NA, nrow(x@index), nrow(y@index))
+  tMat <- matrix(NA, nrow(x@index), nrow(y@index))
+  for(r in 1:nrow(x@index)) {
+    sMat[r,] <- ds[x@index[r,1], y@index[,1]]
+    tMat[r,] <- dt[x@index[r,2], y@index[,2]]
+  }
+  
+  # compose the cov-matrix
+  Sm = variogramLine(model$space, covariance = TRUE, dist_vector = sMat)*model$sill
+  Tm = variogramLine(model$time, covariance = TRUE, dist_vector = tMat)
+  
+  return(Sm * Tm)  
 }
 
 ## product-sum model, BG
 covProdSum <- function(x, y, model) {
+  stopifnot(inherits(x, c("STF", "STS", "STI")) & inherits(y, c("STF", "STS", "STI")))
   
-  vs = variogramLine(model$space, 
-                     dist_vector=spDists(coordinates(x@sp), coordinates(y@sp)))
-  vt = variogramLine(model$time, 
-                     dist_vector = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-")))
-  
+  # double check model for validity, i.e. k:
   k <- (sum(model$space$psill)+sum(model$time$psill)-model$sill)/(sum(model$space$psill)*sum(model$time$psill))
+  if (k <= 0 | k > 1/max(model$space$psill[model$space$model!="Nug"], 
+                         model$time$psill[model$time$model!="Nug"]))
+    stop(paste("k (",k,") is non-positive or too large: no valid model!",sep=""))
   
-  if (k <= 0 | k > 1/max(model$space$psill[2],model$time$psill[2])) 
-    stop("k is negative or too large: no valid model!")
+  # the STF case
+  if (inherits(x, "STF") & inherits(y, "STF")) {
+    # calculate all spatial and temporal distances
+    ds = spDists(coordinates(x@sp), coordinates(y@sp))
+    dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+    
+    # compose the cov-matrix
+    vs = variogramLine(model$space, dist_vector = ds)
+    vt = variogramLine(model$time, dist_vector = dt)
+     
+    return(model$sill-(vt %x% matrix(1,nrow(vs),ncol(vs)) + matrix(1,nrow(vt),ncol(vt)) %x% vs - k * vt %x% vs))
+  } 
 
-  # VGM: vs+vt-k*vs*vt+model$nugget
-
-  return(model$sill-(vt %x% matrix(1,nrow(vs),ncol(vs)) 
-                     + matrix(1,nrow(vt),ncol(vt)) %x% vs
-                     - k * vt %x% vs))
+  # the STI case
+  if(inherits(x, "STI") | inherits(y, "STI")) {
+    # make sure that now both are of type STI
+    x <- as(x, "STI")
+    y <- as(y, "STI")
+    
+    # calculate all spatial and temporal distances
+    ds = spDists(coordinates(x@sp), coordinates(y@sp))
+    dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+    
+    # compose the cov-matrix
+    vs = variogramLine(model$space, dist_vector = ds)
+    vt = variogramLine(model$time, dist_vector = dt)
+    
+    return(model$sill-(vt + vs - k * vt * vs))
+  }
+  
+  # the remaining cases, none of x and y is STI nor are both STF
+  # make sure both are of type STS
+  x <- as(x, "STS")
+  y <- as(y, "STS")
+  
+  # calculate all spatial and temporal distances
+  ds = spDists(coordinates(x@sp), coordinates(y@sp))
+  dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+  
+  # re-arrange the spatial and temporal distances
+  sMat <- matrix(NA, nrow(x@index), nrow(y@index))
+  tMat <- matrix(NA, nrow(x@index), nrow(y@index))
+  for(r in 1:nrow(x@index)) {
+    sMat[r,] <- ds[x@index[r,1], y@index[,1]]
+    tMat[r,] <- dt[x@index[r,2], y@index[,2]]
+  }
+  
+  # compose the cov-matrix
+  vs = variogramLine(model$space, dist_vector = sMat)
+  vt = variogramLine(model$time, dist_vector = tMat)
+  
+  return(model$sill-(vt + vs - k * vt * vs))
 }
 
 ## sumMetric model
 covSumMetric <- function(x, y, model) {
-  if(!class(x) %in% c("STFDF","STSDF", "STF", "STS") | !class(y) %in% c("STFDF","STSDF", "STF", "STS")) 
-    stop("Only dataframes of type STFDF or STSDF are supported.")
-
-  ds = spDists(coordinates(x@sp), coordinates(y@sp))
-  dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+  stopifnot(inherits(x, c("STF", "STS", "STI")) & inherits(y, c("STF", "STS", "STI")))
   
-  if (is(x, "STFDF") && is(y, "STFDF")) {
+  # the STF case
+  if (inherits(x, "STF") & inherits(y, "STF")) {
+    # calculate all spatial and temporal distances
+    ds = spDists(coordinates(x@sp), coordinates(y@sp))
+    dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+    
+    # compose the cov-matrix
     Sm = variogramLine(model$space, covariance = TRUE, dist_vector = ds)
     Tm = variogramLine(model$time, covariance = TRUE, dist_vector = dt)
     
-    h  = sqrt(rep(ds,length(dt))^2 + (model$stAni * rep(dt,each=length(ds)))^2)
+    h  = sqrt((matrix(1,nrow(dt),ncol(dt)) %x% ds)^2 
+              + (model$stAni * dt %x% matrix(1,nrow(ds),ncol(ds)))^2)
     Mm = variogramLine(model$joint, covariance = TRUE, dist_vector = h)
     
     return(matrix(1,nrow(Tm),ncol(Tm)) %x% Sm + Tm %x% matrix(1,nrow(Sm),ncol(Sm)) + Mm)
   } 
   
-  if (is(x,"STFDF") | is(x,"STF")) x = as(x, "STS")
-  if (is(y,"STFDF") | is(y,"STF")) y = as(y, "STS")
-  
-  sMat <- NULL
-  tMat <- NULL
-  for(r in 1:nrow(x@index)) {
-    sMat <- rbind(sMat, ds[x@index[r,1], y@index[,1]])
-    tMat <- rbind(tMat, dt[x@index[r,2], y@index[,2]])
+  # the STI case
+  if(inherits(x, "STI") | inherits(y, "STI")) {
+    # make sure that now both are of type STI
+    x <- as(x, "STI")
+    y <- as(y, "STI")
+    
+    # calculate all spatial and temporal distances
+    ds = spDists(coordinates(x@sp), coordinates(y@sp))
+    dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+    
+    # compose the cov-matrix
+    Sm = variogramLine(model$space, covariance = TRUE, dist_vector = ds)
+    Tm = variogramLine(model$time, covariance = TRUE, dist_vector = dt)
+    
+    h  = sqrt(ds^2 + (model$stAni * dt)^2)
+    Mm = variogramLine(model$joint, covariance = TRUE, dist_vector = h)
+    
+    return(Sm + Tm + Mm)
   }
+  
+  # the remaining cases, none of x and y is STI nor are both STF
+  # make sure both are of type STS
+  x <- as(x, "STS")
+  y <- as(y, "STS")
+  
+  # calculate all spatial and temporal distances
+  ds = spDists(coordinates(x@sp), coordinates(y@sp))
+  dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+  
+  # re-arrange the spatial and temporal distances
+  sMat <- matrix(NA, nrow(x@index), nrow(y@index))
+  tMat <- matrix(NA, nrow(x@index), nrow(y@index))
+  for(r in 1:nrow(x@index)) {
+    sMat[r,] <- ds[x@index[r,1], y@index[,1]]
+    tMat[r,] <- dt[x@index[r,2], y@index[,2]]
+  }
+  
+  # compose the cov-matrix
   Sm = variogramLine(model$space, covariance = TRUE, dist_vector = sMat)
   Tm = variogramLine(model$time, covariance = TRUE, dist_vector = tMat)
   
@@ -260,31 +406,68 @@ covSumMetric <- function(x, y, model) {
   return(Sm + Tm + Mm)
 }
 
+## simple sumMetric model
+covSimpleSumMetric <- function(x, y, model) {
+  covSumMetric(x, y, vgmST("sumMetric", space=model$space, time=model$time,
+                           joint=vgm(sum(model$joint$psill), 
+                                     model$joint$model[model$joint$model != "Nug"],
+                                     model$joint$range, model$nugget),
+                           stAni=model$stAni))
+}
+
 ## metric model
 covMetric <- function(x, y, model) {
-  if(!class(x) %in% c("STFDF","STSDF", "STF", "STS") | !class(y) %in% c("STFDF","STSDF", "STF", "STS")) 
-    stop("Only dataframes of type STFDF or STSDF are supported.")
+  stopifnot(inherits(x, c("STF", "STS", "STI")) & inherits(y, c("STF", "STS", "STI")))
   
-  ds = spDists(coordinates(x@sp), coordinates(y@sp))
-  dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
-  
-  if (is(x, "STFDF") && is(y, "STFDF")) {
-    h  = sqrt(rep(ds,length(dt))^2 + (model$stAni * rep(dt,each=length(ds)))^2)
+  # the STF case
+  if (inherits(x, "STF") & inherits(y, "STF")) {
+    # calculate all spatial and temporal distances
+    ds = spDists(coordinates(x@sp), coordinates(y@sp))
+    dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+    
+    # compose the cov-matrix
+    h  = sqrt((matrix(1,nrow(dt),ncol(dt)) %x% ds)^2
+              + (model$stAni * dt %x% matrix(1,nrow(ds),ncol(ds)))^2)
     Mm = variogramLine(model$joint, covariance = TRUE, dist_vector = h)
     
     return(Mm)
   } 
   
-  if (is(x,"STFDF") | is(x,"STF")) x = as(x, "STS")
-  if (is(y,"STFDF") | is(y,"STF")) y = as(y, "STS")
-  
-  sMat <- NULL
-  tMat <- NULL
-  for(r in 1:nrow(x@index)) {
-    sMat <- rbind(sMat, ds[x@index[r,1], y@index[,1]])
-    tMat <- rbind(tMat, dt[x@index[r,2], y@index[,2]])
+  # the STI case
+  if(inherits(x, "STI") | inherits(y, "STI")) {
+    # make sure that now both are of type STI
+    x <- as(x, "STI")
+    y <- as(y, "STI")
+    
+    # calculate all spatial and temporal distances
+    ds = spDists(coordinates(x@sp), coordinates(y@sp))
+    dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+    
+    # compose the cov-matrix
+    h  = sqrt(ds^2 + (model$stAni * dt)^2)
+    Mm = variogramLine(model$joint, covariance = TRUE, dist_vector = h)
+    
+    return(Mm)
   }
-
+  
+  # the remaining cases, none of x and y is STI nor are both STF
+  # make sure both are of type STS
+  x <- as(x, "STS")
+  y <- as(y, "STS")
+  
+  # calculate all spatial and temporal distances
+  ds = spDists(coordinates(x@sp), coordinates(y@sp))
+  dt = abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-"))
+  
+  # re-arrange the spatial and temporal distances
+  sMat <- matrix(NA, nrow(x@index), nrow(y@index))
+  tMat <- matrix(NA, nrow(x@index), nrow(y@index))
+  for(r in 1:nrow(x@index)) {
+    sMat[r,] <- ds[x@index[r,1], y@index[,1]]
+    tMat[r,] <- dt[x@index[r,2], y@index[,2]]
+  }
+  
+  # compose the cov-matrix
   h  = sqrt(sMat^2 + (model$stAni * tMat)^2)
   Mm = variogramLine(model$joint, covariance = TRUE, dist_vector = h)
   

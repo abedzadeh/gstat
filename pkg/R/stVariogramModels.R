@@ -15,24 +15,21 @@ vgmST <- function(stModel, ..., space, time, joint, sill, nugget, stAni) {
 }
 
 # calculating spatio-temporal variogram surfaces
-variogramSurface <- function(model, dist_grid, covariance=FALSE, ...) {
+variogramSurface <- function(model, dist_grid, ...) {
   if (!inherits(model, "StVariogramModel"))
     warning("\"model\" should be of class \"StVariogramModel\"; no further checks for a proper will made.")
   
   switch(model$stModel,
-         separable=vgmSeparable(model, dist_grid, covariance, ...),
-         productSum=vgmProdSum(model, dist_grid, covariance, ...),
-         sumMetric=vgmSumMetric(model, dist_grid, covariance, ...),
-         simpleSumMetric=vgmSimpleSumMetric(model, dist_grid, covariance, ...),
-         metric=vgmMetric(model, dist_grid, covariance, ...),
+         separable=vgmSeparable(model, dist_grid, ...),
+         productSum=vgmProdSum(model, dist_grid, ...),
+         sumMetric=vgmSumMetric(model, dist_grid, ...),
+         simpleSumMetric=vgmSimpleSumMetric(model, dist_grid, ...),
+         metric=vgmMetric(model, dist_grid, ...),
          stop("Only \"separable\", \"productSum\", \"sumMetric\", \"simpleSumMetric\" and \"metric\" are implemented."))
 }
 
 # separable model: C_s * C_t
-vgmSeparable <- function(model, dist_grid, covariance, separate=TRUE) {
-  if(covariance)
-    return(covSep(x=dist_grid$spacelag, y=dist_grid$timelag, model, separate=separate)) # to be integrated
-  
+vgmSeparable <- function(model, dist_grid) {
   vs = variogramLine(model$space, dist_vector=dist_grid$spacelag)[,2]
   vt = variogramLine(model$time,  dist_vector=dist_grid$timelag)[,2]
 
@@ -41,10 +38,7 @@ vgmSeparable <- function(model, dist_grid, covariance, separate=TRUE) {
 }
 
 # productSum model: C_s*C_t + C_s + C_t
-vgmProdSum <- function(model, dist_grid, covariance) {
-  if(covariance)
-    return(covProdSum(x=dist_grid$spacelag, y=dist_grid$timelag, model)) # to be integrated
-  
+vgmProdSum <- function(model, dist_grid) {
   vs = variogramLine(model$space, dist_vector=dist_grid$spacelag)[,2]
   vt = variogramLine(model$time, dist_vector=dist_grid$timelag)[,2]
 
@@ -56,26 +50,26 @@ vgmProdSum <- function(model, dist_grid, covariance) {
 }
 
 # sumMetric model: C_s + C_t + C_st (Gerard Heuvelink)
-vgmSumMetric <- function(model, dist_grid, covariance) {
-  vs = variogramLine(model$space, dist_vector=dist_grid$spacelag, covariance=covariance)[,2]
-  vt = variogramLine(model$time,  dist_vector=dist_grid$timelag,  covariance=covariance)[,2]
+vgmSumMetric <- function(model, dist_grid) {
+  vs = variogramLine(model$space, dist_vector=dist_grid$spacelag)[,2]
+  vt = variogramLine(model$time,  dist_vector=dist_grid$timelag)[,2]
   h = sqrt(dist_grid$spacelag^2 + (model$stAni * as.numeric(dist_grid$timelag))^2)
-  vst = variogramLine(model$joint,dist_vector=h, covariance=covariance)[,2]
+  vst = variogramLine(model$joint,dist_vector=h)[,2]
   data.frame(spacelag=dist_grid$spacelag, timelag=dist_grid$timelag, model=(vs + vt + vst))
 }
 
 # simplified sumMetric model
-vgmSimpleSumMetric <- function(model, dist_grid, covariance) {
-  vs = variogramLine(model$space, dist_vector=dist_grid$spacelag, covariance=covariance)[,2]
-  vt = variogramLine(model$time,  dist_vector=dist_grid$timelag,  covariance=covariance)[,2]
+vgmSimpleSumMetric <- function(model, dist_grid) {
+  vs = variogramLine(model$space, dist_vector=dist_grid$spacelag)[,2]
+  vt = variogramLine(model$time,  dist_vector=dist_grid$timelag)[,2]
   h = sqrt(dist_grid$spacelag^2 + (model$stAni * as.numeric(dist_grid$timelag))^2)
-  vm = variogramLine(model$joint,dist_vector=h, covariance=covariance)[,2]
+  vm = variogramLine(model$joint, dist_vector=h)[,2]
   data.frame(spacelag=dist_grid$spacelag, timelag=dist_grid$timelag, model=(vs + vt + vm + model$nugget))
 }
 
-vgmMetric <- function(model, dist_grid, covariance) {
+vgmMetric <- function(model, dist_grid) {
   h = sqrt(dist_grid$spacelag^2 + (model$stAni * as.numeric(dist_grid$timelag))^2)
-  vm = variogramLine(model$joint, dist_vector=h, covariance=covariance)[,2]
+  vm = variogramLine(model$joint, dist_vector=h)[,2]
   data.frame(spacelag=dist_grid$spacelag, timelag=dist_grid$timelag, model=vm)
 }
 
