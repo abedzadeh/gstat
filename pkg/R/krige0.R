@@ -14,12 +14,12 @@ extractFormula = function(formula, data, newdata) {
 	list(y = y, X = X, x0 = x0)
 }
 
-idw0 = function(formula, data, newdata, y) {
+idw0 = function(formula, data, newdata, y, idp = 2.0) {
 	s = coordinates(data)
 	s0 = coordinates(newdata)
 	if (missing(y))
 		y = extractFormula(formula, data, newdata)$y
-	D = 1.0 / (spDists(s0, s) * 2)
+	D = 1.0 / (spDists(s0, s) ^ idp)
 	sumD = apply(D, 1, sum)
 	D %*% y / sumD
 }
@@ -119,7 +119,8 @@ krigeST <- function(formula, data, newdata, modelList, y, ...,
     skwts <- CHsolve(V, cbind(v0,X))
 	# ViX = skwts[,-(1:ncol(v0))]
 	# skwts = skwts[,1:ncol(v0)]
-	npts = prod(dim(newdata)[1:2])
+	#npts = prod(dim(newdata)[1:2]) #-> does not work for STI
+	npts = length(newdata)
 	ViX = skwts[,-(1:npts)]
 	skwts = skwts[,1:npts]
 	beta = solve(t(X) %*% ViX, t(ViX) %*% y)

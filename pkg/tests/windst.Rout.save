@@ -90,8 +90,8 @@ Type 'q()' to quit R.
 Loading required package: rgdal
 rgdal: version: 0.8-11, (SVN revision 479M)
 Geospatial Data Abstraction Library extensions to R successfully loaded
-Loaded GDAL runtime: GDAL 1.9.2, released 2012/10/08
-Path to GDAL shared files: /usr/share/gdal/1.9
+Loaded GDAL runtime: GDAL 1.10.0, released 2013/04/24
+Path to GDAL shared files: /usr/share/gdal/1.10
 Loaded PROJ.4 runtime: Rel. 4.8.0, 6 March 2012, [PJ_VERSION: 480]
 Path to PROJ.4 shared files: (autodetected)
 Loading required package: maps
@@ -100,4 +100,4 @@ Checking rgeos availability: TRUE
 > 
 > proc.time()
    user  system elapsed 
-  4.408   0.108   4.526 
+  3.604   0.100   3.704 

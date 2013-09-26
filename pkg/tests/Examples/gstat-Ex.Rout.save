@@ -1588,8 +1588,8 @@ Warning in plot.xy(xy.coords(x, y), type = type, ...) :
 Loading required package: rgdal
 rgdal: version: 0.8-11, (SVN revision 479M)
 Geospatial Data Abstraction Library extensions to R successfully loaded
-Loaded GDAL runtime: GDAL 1.9.2, released 2012/10/08
-Path to GDAL shared files: /usr/share/gdal/1.9
+Loaded GDAL runtime: GDAL 1.10.0, released 2013/04/24
+Path to GDAL shared files: /usr/share/gdal/1.10
 Loaded PROJ.4 runtime: Rel. 4.8.0, 6 March 2012, [PJ_VERSION: 480]
 Path to PROJ.4 shared files: (autodetected)
     np       dist     gamma dir.hor dir.ver   id
@@ -1773,13 +1773,14 @@ detaching ‘package:lattice’
 10   Bes                              Bes (bessel)
 11   Pen                      Pen (pentaspherical)
 12   Per                            Per (periodic)
-13   Hol                                Hol (hole)
-14   Log                         Log (logarithmic)
-15   Pow                               Pow (power)
-16   Spl                              Spl (spline)
-17   Leg                            Leg (Legendre)
-18   Err                   Err (Measurement error)
-19   Int                           Int (Intercept)
+13   Wav                                Wav (wave)
+14   Hol                                Hol (hole)
+15   Log                         Log (logarithmic)
+16   Pow                               Pow (power)
+17   Spl                              Spl (spline)
+18   Leg                            Leg (Legendre)
+19   Err                   Err (Measurement error)
+20   Int                           Int (Intercept)
 > vgm(10, "Exp", 300)
   model psill range
 1   Exp    10   300
@@ -2100,7 +2101,7 @@ detaching ‘package:sp’
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  15.404 0.316 15.78 0 0 
+Time elapsed:  15.088 0.296 15.427 0 0 
 > grDevices::dev.off()
 null device 
           1 
