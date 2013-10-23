@@ -22,28 +22,31 @@ grd = as(SpatialGrid(GridTopology(c(0.025,0.025), c(.05, .05), c(20,20))), "Spat
 tgrd = seq(min(t), max(t), length.out = 10)
 stf = STF(grd, tgrd)
 
-# find neighbours using FNN
-library(FNN)
-df = as(stsdf, "data.frame")[c("x","y","time")]
-df$time = as.numeric(df$time)/1e6
-summary(df)
-
-query = as(stf, "data.frame")[c("s1", "s2", "time")]
-query$time = as.numeric(query$time)/1e6
-summary(query)
-
-nb = get.knnx(as.matrix(df), as.matrix(query), 50)[[1]]
+# define a variogram model
 sumMetricModel <- vgmST("sumMetric",
                         space=vgm(0, "Exp", 1),
                         time =vgm(0, "Exp",  1),
                         joint=vgm(0.8, "Exp", 1, 0.2),
                         stAni=1/1e6)
 
+
+# find neighbours using FNN
+library(FNN)
+df = as(stsdf, "data.frame")[c("x","y","time")]
+df$time = as.numeric(df$time)*sumMetricModel$stAni
+summary(df)
+
+query = as(stf, "data.frame")[c("s1", "s2", "time")]
+query$time = as.numeric(query$time)*sumMetricModel$stAni
+summary(query)
+
+nb = get.knnx(as.matrix(df), as.matrix(query), 50)[[1]]
+
 sti <- as(stf, "STI")
 
 # do the kriging
 out = sapply(1:prod(dim(stf)), function(x) {
-  data =  stsdf[nb[x,],]
+  data =  stsdf[stsdf@index[nb[x,],]]
   krigeST(z~1, data, sti[x,], sumMetricModel)$var1.pred
 })
 
