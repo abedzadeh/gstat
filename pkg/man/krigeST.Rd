@@ -31,7 +31,9 @@ krigeST(formula, data, newdata, modelList, y, ..., computeVar = FALSE,
   \code{productSum}, \code{metric}, \code{sumMetric} and \code{simpleSumMetric}. 
   See the examples section in \code{\link{fit.StVariogram}} or 
   \code{\link{variogramSurface}} for details on how to define spatio-temporal 
-  covariance models.}
+  covariance models. NOTE: the temporal distance is calculated in seconds 
+  and hence the temporal range and spatio-temporal anisotropy of the provided 
+  spatio-temporal model need to be represented in seconds as well.}
  \item{y}{matrix; to krige multiple fields in a single step, pass data 
   as columns of matrix \code{y}. This will ignore the value of the 
   response in \code{formula}.}

@@ -178,13 +178,13 @@ STsolve = function(A, b, X) {
 }
 
 covfn.ST = function(x, y = x, model, ...) {
-    switch(model$stModel,
-           separable=covSeparable(x, y, model, ...),
-           productSum=covProdSum(x, y, model),
-           sumMetric=covSumMetric(x, y, model),
-           simpleSumMetric=covSimpleSumMetric(x, y, model),
-           metric=covMetric(x, y, model),
-           stop(paste("Provided spatio-temporal model (",model$stModel,") is not supported.",sep="")))
+  switch(model$stModel,
+         separable=covSeparable(x, y, model, ...),
+         productSum=covProdSum(x, y, model),
+         sumMetric=covSumMetric(x, y, model),
+         simpleSumMetric=covSimpleSumMetric(x, y, model),
+         metric=covMetric(x, y, model),
+         stop(paste("Provided spatio-temporal model (",model$stModel,") is not supported.",sep="")))
 }
 
 ## covariance models
