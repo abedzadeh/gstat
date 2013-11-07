@@ -31,9 +31,8 @@ krigeST(formula, data, newdata, modelList, y, ..., computeVar = FALSE,
   \code{productSum}, \code{metric}, \code{sumMetric} and \code{simpleSumMetric}. 
   See the examples section in \code{\link{fit.StVariogram}} or 
   \code{\link{variogramSurface}} for details on how to define spatio-temporal 
-  covariance models. NOTE: the temporal distance is calculated in seconds 
-  and hence the temporal range and spatio-temporal anisotropy of the provided 
-  spatio-temporal model need to be represented in seconds as well.}
+  covariance models. \code{krigeST} will look for a "temporal unit" attribute
+  in the provided modelList in order to adjust the temporal scales.}
  \item{y}{matrix; to krige multiple fields in a single step, pass data 
   as columns of matrix \code{y}. This will ignore the value of the 
   response in \code{formula}.}
@@ -45,8 +44,8 @@ krigeST(formula, data, newdata, modelList, y, ..., computeVar = FALSE,
 }
 \details{
  Function \code{krigeST} is a R implementation of the kriging function from 
- \link{gstat} using spatio-temporal covariance modells follwoing the 
- implementaion of \code{\link{krige0}}. Function \code{krigeST} offers some 
+ \link{gstat} using spatio-temporal covariance models following the 
+ implementation of \code{\link{krige0}}. Function \code{krigeST} offers some 
  particular methods for ordinary spatio-temporal (ST) kriging. In particular, it does not
  support block kriging or kriging in a local neighbourhood, and does not
  provide simulation.

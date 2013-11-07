@@ -1,4 +1,4 @@
-VgmFillNA = function(x, boundaries) {
+VgmFillNA <- function(x, boundaries) {
   # pads the sample variogram with NA rows where no data are available.
 	n = length(boundaries) - 1
 	ix = rep(NA, n)

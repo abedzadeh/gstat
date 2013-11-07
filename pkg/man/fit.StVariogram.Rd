@@ -14,7 +14,7 @@ fit.StVariogram(object, model, ..., wles = FALSE)
   \item{wles}{Resiudals are weighted by the number of points in each lag class.}
 }
 \value{
-Returns a spatio-temporal variogram model, as S3 class StvariogramModel.
+Returns a spatio-temporal variogram model, as S3 class StVariogramModel. It carries the temporal and spatial unit as attributes in order to allow \code{\link{krigeST}} to adjust for different units. The units are obtained from the provided empirical variogram.
 }
 \author{
 Benedikt Graeler

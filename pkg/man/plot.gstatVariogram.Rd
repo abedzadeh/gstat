@@ -16,7 +16,8 @@ Creates a variogram plot
 	layout, ...)
 \method{plot}{variogramMap}(x, np = FALSE, skip, threshold, ...)
 \method{plot}{StVariogram}(x, model = NULL, ..., col = bpy.colors(), xlab, ylab, map = TRUE,
-		convertMonths = FALSE, as.table=T, wireframe = FALSE, both = FALSE, all = FALSE)
+convertMonths = FALSE, as.table=T, wireframe = FALSE, 
+both = FALSE, all = FALSE)
 }
 \arguments{
 \item{x}{ object obtained from the method 
