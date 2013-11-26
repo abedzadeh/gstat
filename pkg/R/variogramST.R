@@ -177,14 +177,9 @@ plot.StVariogram = function(x, model=NULL, ..., col = bpy.colors(), xlab, ylab,
                   xlab = xlab, ylab = ylab, ...)
 			} else {
         if (all) { # plot sample and all models in separate wireframes
-          if (length(model) > 1)
-            wireframe(gamma ~ spacelag*timelag | what, 
-                      x, drape = TRUE, col.regions = col, 
-                      xlab = xlab, ylab = ylab, as.table=as.table, ...)
-          else 
-            wireframe(as.formula(paste(model[[1]]$stModel,"~ spacelag*timelag")), 
-                      x0, drape = TRUE, col.regions = col, 
-                      xlab = xlab, ylab = ylab, as.table=as.table, ...)
+          wireframe(gamma ~ spacelag*timelag | what, 
+                    x, drape = TRUE, col.regions = col, 
+                    xlab = xlab, ylab = ylab, as.table=as.table, ...)
         } else { # plot all theoretical models in separate wireframes, the default
           if (length(model) > 1)
             wireframe(gamma ~ spacelag*timelag | what, 
@@ -219,4 +214,18 @@ plot.StVariogram = function(x, model=NULL, ..., col = bpy.colors(), xlab, ylab,
 				auto.key = list(space = "right"), xlab = xlab, 
 				par.settings = ps, ...)
 	}
+}
+
+print.StVariogramModel <- function(x) {
+  possComp <- c("space", "time", "joint")
+  for(comp in possComp[possComp %in% names(x)]) {
+    rownames(x[[comp]]) <- 1:nrow(x[[comp]])
+    cat(paste(comp,"component: \n"))
+    print(x[[comp]])
+  }
+  
+  possAddPar <- c("sill", "nugget", "stAni")
+  for(addPar in possAddPar[possAddPar %in% names(x)]) {
+    cat(paste(addPar, ": ",x[[addPar]],"\n", sep=""))
+  }
 }

@@ -28,7 +28,7 @@ sumMetricModel <- vgmST("sumMetric",
                         time =vgm(0, "Exp",  1),
                         joint=vgm(0.8, "Exp", 1, 0.2),
                         stAni=1/1e6)
-
+attr(sumMetricModel, "temporal unit") <- "secs"
 
 # find neighbours using FNN
 library(FNN)

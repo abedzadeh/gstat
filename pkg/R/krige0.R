@@ -134,9 +134,11 @@ krigeST <- function(formula, data, newdata, modelList, y, ...,
 		if(is.list(v0)) # in the separable case
 			v0 = v0$Tm %x% v0$Sm
 		Q = t(x0) - t(ViX) %*% v0
-		var = c0 - t(v0) %*% skwts + t(Q) %*% CHsolve(t(X) %*% ViX, Q)
-		if (!fullCovariance)
-			var = diag(var)
+		if (!fullCovariance) { # suggested by Marius Appel
+		  var = c0 - apply(t(v0) * t(skwts),1,sum) + apply(t(Q) * t(CHsolve(t(X) %*% ViX, Q)),1,sum)
+		} else {
+		  var = c0 - t(v0) %*% skwts + t(Q) %*% CHsolve(t(X) %*% ViX, Q)
+		}
 		res <- data.frame(pred = pred, var = var)
 	} else
 		res <- data.frame(pred)
