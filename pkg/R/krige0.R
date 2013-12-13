@@ -84,7 +84,7 @@ krige0 <- function(formula, data, newdata, model, beta, y, ...,
 	if (computeVar) {
 		if (fullCovariance) {
 		  corMat <- cov2cor(variogramLine(model, dist_vector = spDists(s0, s0), covariance = TRUE))
-		  var <- corMat*matrix(sqrt(var) %x% sqrt(var),dim(s0)[1],dim(s0)[1])
+		  var <- corMat*matrix(sqrt(var) %x% sqrt(var), nrow(corMat), ncol(corMat))
 		}
 		list(pred = pred, var = var)
 	} else {
@@ -135,10 +135,13 @@ krigeST <- function(formula, data, newdata, modelList, y, ...,
 		if(is.list(v0)) # in the separable case
 			v0 = v0$Tm %x% v0$Sm
 		Q = t(x0) - t(ViX) %*% v0
-		if (!fullCovariance) { # suggested by Marius Appel
-		  var = c0 - apply(t(v0) * t(skwts),1,sum) +  Q * CHsolve(t(X) %*% ViX, Q)
-		} else {
-		  var = c0 - t(v0) %*% skwts + t(Q) %*% CHsolve(t(X) %*% ViX, Q)
+		# suggested by Marius Appel
+		var = c0 - apply(v0 * skwts, 2, sum) + apply(Q * CHsolve(t(X) %*% ViX, Q), 2, sum)
+		if (fullCovariance) {
+		  corMat <- cov2cor(covfn.ST(newdata, newdata, modelList))
+		  var <- corMat*matrix(sqrt(var) %x% sqrt(var), nrow(corMat), ncol(corMat))
+		  # var = c0 - t(v0) %*% skwts + t(Q) %*% CHsolve(t(X) %*% ViX, Q)
+      return(list(pred=pred, var=var))
 		}
 		res <- data.frame(pred = pred, var = var)
 	} else
@@ -194,51 +197,6 @@ covfn.ST = function(x, y = x, model, ...) {
 
 ## covariance models
 ####################
-
-# separable covariance model
-# covSep <- function(x, y, model, separate=TRUE) {
-#   if (is(model$space, "variogramModel")) 
-#     Sm = variogramLine(model$space, covariance = TRUE, dist_vector = 
-#       spDists(coordinates(x@sp), coordinates(y@sp)))*model$sill
-#   else
-#     Sm = model$space(x, y)
-#   stopifnot(!is.null(Sm))
-#   if (is(model$time, "variogramModel")) 
-#     Tm = variogramLine(model$time, covariance = TRUE, dist_vector = 
-#       abs(outer(as.numeric(index(x@time)), as.numeric(index(y@time)), "-")))
-#   else
-#     Tm = model$time(x, y)
-#   stopifnot(!is.null(Tm))
-#   if (separate)
-#     list(Sm = Sm, Tm = Tm)
-#   else
-#     Tm %x% Sm # kronecker product
-# }
-
-# tunit <- attr(modelList, "temporal unit")
-# if(!is.null(tunit)) {
-#   scaleFac <- switch(tunit, 
-#                      days=24*60*60, 
-#                      hours=60*60, 
-#                      mins=60, 
-#                      secs=1,
-#                      -1)
-#   if(scaleFac == -1) {
-#     warning(tunit, "is an unknown time unit to krigeST. No attempt to correct the temporal scale is made.")
-#     scaleFac <- 1
-#   }
-#   if(scaleFac > 1) {
-#     cat(paste("The variogram model has a temporal unit (", tunit,
-#               ") different than the temporal metric of krigeST (secs). ",
-#               "An corrrection attempt has been made by the factor: ",
-#               scaleFac, sep=""))
-#     if(modelList$stModel %in% c("separable", "productSum", "sumMetric", "simpleSumMetric"))
-#       modelList$time$range <- modelList$time$range*scaleFac
-#     if(modelList$stModel %in% c("metric", "sumMetric", "simpleSumMetric"))
-#       modelList$stAni <- modelList$stAni/scaleFac
-#   }
-# }
-
 
 covSeparable <- function(x, y, model, separate) {  
   if(missing(separate))
