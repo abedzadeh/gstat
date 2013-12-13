@@ -1,10 +1,9 @@
 Package: gstat
 Version: 1.0-19
-Date: 2013/11/26
+Date: 2013/12/13
 Title: spatial and spatio-temporal geostatistical modelling, prediction and simulation
-Authors@R: c(person("Edzer", "Pebesma", role = c("aut", "cre"), email =
-        "edzer.pebesma@uni-muenster.de"), person("Benedikt", "Graeler",
-        role = "aut"))
+Authors@R: c(person("Edzer", "Pebesma", role = c("aut", "cre"), email = "edzer.pebesma@uni-muenster.de"),
+             person("Benedikt", "Graeler", role = "aut"))
 Description: variogram modelling; simple, ordinary and universal point or block (co)kriging, sequential Gaussian or indicator (co)simulation; variogram and variogram map plotting utility functions.
 Depends: R (>= 2.10)
 Imports: methods, lattice, sp (>= 0.9-72), zoo, spacetime (>= 1.0-0)

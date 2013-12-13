@@ -41,7 +41,6 @@ krige0 <- function(formula, data, newdata, model, beta, y, ...,
 	if (missing(y))
 		y = lst$y
 	ll = (!is.na(is.projected(data)) && !is.projected(data))
-
 	s = coordinates(data)
 	s0 = coordinates(newdata)
 	if (is(model, "variogramModel")) {
@@ -55,8 +54,7 @@ krige0 <- function(formula, data, newdata, model, beta, y, ...,
 		V = model(data, data, ...)
 		v0 = model(data, newdata, ...)
 		if (computeVar) {
-			if (is(newdata, "SpatialLines") || 
-					is(newdata, "SpatialPolygons"))
+			if (is(newdata, "SpatialLines") || is(newdata, "SpatialPolygons"))
 				stop("varying target support has not been implemented")
 			c0 = as.numeric(model(newdata[1, drop=FALSE],
 				newdata[1, drop=FALSE]))
@@ -67,28 +65,31 @@ krige0 <- function(formula, data, newdata, model, beta, y, ...,
 	}
 	if (!missing(beta)) { # sk:
 		skwts = CHsolve(V, v0)
-		if (computeVar)
-			var = c0 - t(v0) %*% skwts
+		if (computeVar) {
+		  var <- c0 - apply(v0*skwts, 2, sum)
+		}
+    
+    
 	} else { # ok/uk -- need to estimate beta:
 		skwts = CHsolve(V, cbind(v0, X))
 		ViX = skwts[,-(1:nrow(s0))]
 		skwts = skwts[,1:nrow(s0)]
 		beta = solve(t(X) %*% ViX, t(ViX) %*% y)
 		if (computeVar) { 
-			# here done the HARD, i.e. m x m way; first compute
-			# (x0-X'C-1 c0)'(X'C-1X)-1 (x0-X'C-1 c0) 
-			# -- precompute term 1+3:
 			Q = t(x0) - t(ViX) %*% v0
-			var = c0 - t(v0) %*% skwts + t(Q) %*% CHsolve(t(X) %*% ViX, Q)
+			var <- c0 - apply(v0*skwts, 2, sum) + apply(Q * CHsolve(t(X) %*% ViX, Q), 2, sum)
 		}
 	}
 	pred = x0 %*% beta + t(skwts) %*% (y - X %*% beta)
 	if (computeVar) {
-		if (!fullCovariance)
-			var = diag(var)
+		if (fullCovariance) {
+		  corMat <- cov2cor(variogramLine(model, dist_vector = spDists(s0, s0), covariance = TRUE))
+		  var <- corMat*matrix(sqrt(var) %x% sqrt(var),dim(s0)[1],dim(s0)[1])
+		}
 		list(pred = pred, var = var)
-	} else
-		pred
+	} else {
+    pred
+	}
 }
 
 krigeST <- function(formula, data, newdata, modelList, y, ..., 
@@ -135,7 +136,7 @@ krigeST <- function(formula, data, newdata, modelList, y, ...,
 			v0 = v0$Tm %x% v0$Sm
 		Q = t(x0) - t(ViX) %*% v0
 		if (!fullCovariance) { # suggested by Marius Appel
-		  var = c0 - apply(t(v0) * t(skwts),1,sum) + apply(t(Q) * t(CHsolve(t(X) %*% ViX, Q)),1,sum)
+		  var = c0 - apply(t(v0) * t(skwts),1,sum) +  Q * CHsolve(t(X) %*% ViX, Q)
 		} else {
 		  var = c0 - t(v0) %*% skwts + t(Q) %*% CHsolve(t(X) %*% ViX, Q)
 		}
@@ -178,8 +179,6 @@ STsolve = function(A, b, X) {
 	# X comes full:
 	ret2 = apply(X, 2, function(x) 
 			STbacksolve(Tm, matrix(x, nrow(Sm), nrow(Tm)), Sm))
-	#print(dim(ret1))
-	#print(dim(ret2))
 	cbind(ret1, ret2)
 }
 
