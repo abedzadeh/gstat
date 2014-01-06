@@ -185,12 +185,8 @@ krigeST.local <- function(formula, data, newdata, modelList, nmax, stAni,
   df = as(data, "data.frame")[,c(1,2,4)]
   df$time = as.numeric(df$time)*stAni
   
-  print(summary(df))
-  
   query = as(newdata, "data.frame")[,c(1,2,4)]
   query$time = as.numeric(query$time)*stAni
-  
-  print(summary(query))
   
   nb = get.knnx(as.matrix(df), as.matrix(query), nmax)[[1]]
   
