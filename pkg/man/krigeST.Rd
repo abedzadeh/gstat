@@ -10,8 +10,8 @@
 Function for ordinary global spatio-temporal kriging on point support
 }
 \usage{
-krigeST(formula, data, newdata, modelList, y, ..., computeVar = FALSE,
-	fullCovariance = FALSE)
+krigeST(formula, data, newdata, modelList, y, nmax = Inf, stAni = NULL,
+        computeVar = FALSE,	fullCovariance = FALSE)
 }
 \arguments{
  \item{formula}{ formula that defines the dependent variable as a linear
@@ -36,6 +36,8 @@ krigeST(formula, data, newdata, modelList, y, ..., computeVar = FALSE,
  \item{y}{matrix; to krige multiple fields in a single step, pass data 
   as columns of matrix \code{y}. This will ignore the value of the 
   response in \code{formula}.}
+ \item{nmax}{The maximum number of neighbouring locations for a spatio-temporal local neighbourhood}
+ \item{stAni}{a spatio-temporal anisotropy scaling assuming a metric spatio-temporal space. Used only for the selection of the closest neighbours. This scaling needs only to be provided in case the model does not hava a stAni parameter, or if a different one should be used for the nighbourhood selection.}
  \item{\dots}{ further arguments (currently unused)}
  \item{computeVar}{logical; if TRUE, prediction variances will be returned}
  \item{fullCovariance}{logical; if FALSE a vector with prediction 

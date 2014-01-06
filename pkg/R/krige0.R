@@ -92,13 +92,17 @@ krige0 <- function(formula, data, newdata, model, beta, y, ...,
 	}
 }
 
-krigeST <- function(formula, data, newdata, modelList, y, ..., 
-		computeVar = FALSE, fullCovariance = FALSE) {
+krigeST <- function(formula, data, newdata, modelList, y, nmax=Inf, stAni=NULL,
+                    computeVar = FALSE, fullCovariance = FALSE) {
 	stopifnot(inherits(modelList, "StVariogramModel"))
 	stopifnot(inherits(data, c("STF", "STS", "STI")) & inherits(newdata, c("STF", "STS", "STI"))) 
 	stopifnot(identical(proj4string(data@sp), proj4string(newdata@sp)))
   stopifnot(class(data@time) == class(newdata@time))
+  stopifnot(nmax > 0)
   
+  if(nmax < Inf)
+    return(krigeST.local(formula, data, newdata, modelList, nmax, stAni, computeVar, fullCovariance))
+    
 	if(is.null(attr(modelList,"temporal unit")))
 	  warning("The spatio-temporal variogram model does not carry a time unit attribute: krisgeST cannot check whether the temporal distance metrics coincide.")
 
@@ -154,6 +158,65 @@ krigeST <- function(formula, data, newdata, modelList, y, ...,
 	  names(res) = c("var1.pred", "var1.var")
 	addAttrToGeom(geometry(newdata), res)
 }
+
+# local spatio-temporal kriging
+krigeST.local <- function(formula, data, newdata, modelList, nmax, stAni,
+                          computeVar=FALSE, fullCovariance=FALSE) {
+  if(is.null(stAni) & !is.null(modelList$stAni)) {
+      stAni <- modelList$stAni
+      
+      # scale stAni [spatial/temporal] to seconds
+      if(!is.null(attr(modelList,"temporal unit")))
+        stAni/switch(attr(modelList, "temporal unit"),
+                     secs=1,
+                     mins=60,
+                     hours=3600,
+                     days=86400,
+                     stop("Temporal unit",attr(modelList, "temporal unit"),"not implemented."))
+      
+      # check whether stAni meets the coordinates' unit
+      stopifnot( (is.projected(data) & (attr(modelList, "spatial unit") %in% c("km","m"))) | (!is.projected(data) & !(attr(modelList, "spatial unit") %in% c("km","m"))))
+  }
+  if(is.null(stAni))
+    stop("The spatio-temporal model does not provide a spatio-temporal 
+         anisotropy scaling nor is the parameter stAni provided. One of 
+         these is necessary for local spatio-temporal kriging.")
+  
+  df = as(data, "data.frame")[,c(1,2,4)]
+  df$time = as.numeric(df$time)*stAni
+  
+  print(summary(df))
+  
+  query = as(newdata, "data.frame")[,c(1,2,4)]
+  query$time = as.numeric(query$time)*stAni
+  
+  print(summary(query))
+  
+  nb = get.knnx(as.matrix(df), as.matrix(query), nmax)[[1]]
+  
+  res <- numeric(nrow(query))
+  pb = txtProgressBar(style = 3, max = nrow(query))
+  for(i in 1:nrow(query)) {
+    nghbrData <- subsetThroughDfInd(data, nb[i,])
+    res[i] <- krigeST(formula, nghbrData, subsetThroughDfInd(newdata, i),
+                      modelList, computeVar=FALSE, fullCovariance=FALSE)$var1.pred
+    setTxtProgressBar(pb, i)  
+  }
+  close(pb)
+  
+  addAttrToGeom(geometry(newdata), data.frame(var1.pred=res))
+}
+
+subsetThroughDfInd <- function(data, ind) {
+  switch(class(data),
+         STSDF = data[data@index[ind,1],data@index[ind,2]],
+         STFDF = data[(ind-1)%%length(data@sp)+1,(ind-1)%/%length(data@sp)+1],
+         STIDF = data[ind,],
+         STS = data[data@index[ind,1],data@index[ind,2]],
+         STF = data[(ind-1)%%length(data@sp)+1,(ind-1)%/%length(data@sp)+1],
+         STI = data[ind,])
+}
+
 
 STsolve = function(A, b, X) {
 # V = A$T %x% A$S -- a separable covariance; solve A x = b for x
