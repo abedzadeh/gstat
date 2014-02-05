@@ -321,8 +321,9 @@ covSeparable <- function(x, y, model, separate) {
     # calculate all spatial and temporal distances
     ds = spDists(x@sp, y@sp)
     dt = abs(outer(index(x@time), index(y@time), "-"))
-    
-    
+    if(!is.null(attr(model,"temporal unit")))
+      units(dt) <- attr(model, "temporal unit") # ensure the same temporal metric as in the variogram definition
+    dt <- as(dt, "matrix")
     
     # compose the cov-matrix
     Sm = variogramLine(model$space, covariance = TRUE, dist_vector = ds)*model$sill

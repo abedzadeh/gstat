@@ -30,6 +30,7 @@ VgmAverage = function(ret, boundaries) {
 }
 
 StVgmLag = function(formula, data, dt, pseudo, ...) {
+  dotLst <- list(...)
 	.ValidObs = function(formula, data)
 		!is.na(data[[as.character(as.list(formula)[[2]])]])
 	d = dim(data)
@@ -64,7 +65,7 @@ StVgmLag = function(formula, data, dt, pseudo, ...) {
 			}
 		}
 	}
-	VgmAverage(ret, ...)
+	VgmAverage(ret, dotLst$boundaries)
 }
 
 variogramST = function(formula, locations, data, ..., tlags = 0:15, cutoff, 
@@ -106,21 +107,24 @@ variogramST = function(formula, locations, data, ..., tlags = 0:15, cutoff,
 	v$timelag = rep(t, sapply(ret, nrow))
 	if (is(t, "yearmon"))
 		class(v$timelag) = "yearmon"
-  attr(v$timelag,"units") <- attr(twidth,"units")
-  
+    
 	b = attr(ret[[2]], "boundaries")
 	b = c(0, b[2]/1e6, b[-1])
 	# ix = findInterval(v$dist, b) will use all spacelags
 	b = b[-2]
 	# spacelags = c(0, b[-length(b)] + diff(b)/2) will use all spacelags
 	v$spacelag = c(0, b[-length(b)] + diff(b)/2) # spacelags[ix] will use all spacelags
-	if (isTRUE(!is.projected(data)))
-		attr(v$spacelag, "units") = "km"
+	
 	class(v) = c("StVariogram", "data.frame")
 	if(na.omit)
-    return(na.omit(v))
-  else
-    return(v)
+    v <- na.omit(v)
+
+  # setting attributes to allow krigeST to double check metrics
+  attr(v$timelag,"units") <- attr(twidth,"units")
+  if (isTRUE(!is.projected(data)))
+    attr(v$spacelag, "units") = "km"
+  
+  return(v)
 }
 
 plot.StVariogram = function(x, model=NULL, ..., col = bpy.colors(), xlab, ylab,
