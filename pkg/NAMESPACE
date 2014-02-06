@@ -69,6 +69,7 @@ S3method(print, gstat)
 S3method(print, gstatVariogram)
 S3method(print, variogramCloud)
 S3method(print, variogramModel)
+S3method(print, StVariogramModel)
 
 S3method(variogram, default)
 S3method(variogram, formula)

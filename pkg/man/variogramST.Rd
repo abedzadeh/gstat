@@ -68,7 +68,7 @@ to fit a spatio-temporal variogram model to a spatio-temporal sample variogram:
 }
 \examples{
 # The following spatio-temporal variogram has been calcualted through
-# vv = variogramST(PM10~1, r5to10, width=20, cutoff = 200)
+# vv = variogram(PM10~1, r5to10, width=20, cutoff = 200, tlags=0:5)
 # in the vignette "st".
 
 data(vv)

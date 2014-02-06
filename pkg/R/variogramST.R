@@ -220,12 +220,12 @@ plot.StVariogram = function(x, model=NULL, ..., col = bpy.colors(), xlab, ylab,
 	}
 }
 
-print.StVariogramModel <- function(x) {
+print.StVariogramModel <- function(x, ...) {
   possComp <- c("space", "time", "joint")
   for(comp in possComp[possComp %in% names(x)]) {
     rownames(x[[comp]]) <- 1:nrow(x[[comp]])
     cat(paste(comp,"component: \n"))
-    print(x[[comp]])
+    print(x[[comp]], ...)
   }
   
   possAddPar <- c("sill", "nugget", "stAni")
